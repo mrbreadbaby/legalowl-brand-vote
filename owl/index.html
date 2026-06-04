@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1A2942">
+<title>LegalOwl — The Owl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  button, input, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; border: 0; background: transparent; }
+
+  :root {
+    --cream: #FBF7F0;
+    --cream-2: #F2EBDD;
+    --navy: #1A2942;
+    --navy-2: #0F1A2C;
+    --ink: #2A3548;
+    --muted: #6B5D4C;
+    --gold: #D4A75A;
+    --terra: #B8533D;
+    --border: #E0D5C0;
+    --radius: 14px;
+    --shadow-sm: 0 1px 3px rgba(26, 41, 66, 0.06), 0 2px 8px rgba(26, 41, 66, 0.04);
+    --shadow-md: 0 4px 16px rgba(26, 41, 66, 0.10), 0 8px 32px rgba(26, 41, 66, 0.06);
+    --shadow-lg: 0 8px 32px rgba(26, 41, 66, 0.18), 0 16px 64px rgba(26, 41, 66, 0.12);
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--cream); color: var(--ink); min-height: 100vh;
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    background-image:
+      radial-gradient(at 10% 0%, rgba(212, 167, 90, 0.08) 0%, transparent 50%),
+      radial-gradient(at 90% 100%, rgba(184, 83, 61, 0.06) 0%, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  .wrap { max-width: 600px; margin: 0 auto; padding: 28px 20px 60px; }
+
+  .eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--terra);
+    margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+  }
+  .eyebrow::before {
+    content: ''; display: inline-block; width: 6px; height: 6px;
+    border-radius: 50%; background: var(--terra);
+    box-shadow: 0 0 0 4px rgba(184, 83, 61, 0.15);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(184, 83, 61, 0.15); }
+    50% { box-shadow: 0 0 0 8px rgba(184, 83, 61, 0.05); }
+  }
+
+  .title-row { display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap; margin: 0 0 16px; }
+  h1.title {
+    font-weight: 900; font-size: clamp(34px, 8vw, 48px);
+    line-height: 0.98; letter-spacing: -0.03em;
+    color: var(--navy); margin: 0;
+  }
+  h1.title em { font-style: italic; font-weight: 300; color: var(--gold); }
+
+  
+
+  .lede { font-size: 16px; line-height: 1.55; color: var(--muted); margin: 0 0 8px; }
+
+  .how-to {
+    background: var(--cream-2); border-radius: 10px;
+    padding: 14px 18px; margin: 16px 0 0;
+    font-size: 13px; color: var(--ink); line-height: 1.55;
+  }
+  .how-to strong { color: var(--navy); }
+
+  /* v1.1: live-badge display:none default — no phantom layout gap. */
+  .live-badge {
+    display: none;
+    align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 500; color: var(--navy);
+    background: var(--cream-2); padding: 6px 10px; border-radius: 20px;
+    margin-top: 14px;
+  }
+  .live-badge.visible { display: inline-flex; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .live-badge .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #22C55E; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+  }
+
+  /* v1.1: context blurb + deadline pill (mirrors single-select template) */
+  .context-blurb {
+    font-size: 14px; line-height: 1.55; color: var(--ink);
+    margin: 14px 0 4px; padding: 10px 14px;
+    background: var(--cream-2);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+  }
+  .deadline-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 600; color: var(--terra);
+    margin-top: 8px; letter-spacing: 0.02em;
+  }
+  .deadline-pill::before { content: "⏱"; font-size: 14px; opacity: 0.9; }
+
+  .ranking-status {
+    margin: 24px 0 12px; padding: 14px 18px;
+    background: white; border: 1.5px solid var(--border);
+    border-radius: 12px; display: flex; justify-content: space-between;
+    align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .ranking-status .count {
+    font-size: 14px; color: var(--ink); font-weight: 500;
+  }
+  .ranking-status .count strong { color: var(--navy); font-weight: 900; }
+  .shuffle-btn {
+    font-size: 12px; color: var(--terra); font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    padding: 6px 12px; border-radius: 16px;
+    border: 1px solid var(--terra); background: transparent;
+    transition: all 0.18s ease;
+  }
+  .shuffle-btn:hover { background: var(--terra); color: var(--cream); }
+
+  /* v1.2: drag-to-reorder rank list (ported from eval-2 baseline) */
+  .rank-list-wrap {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px;
+    margin: 18px 0 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .rank-list-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 10px 6px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .rank-list { list-style: none; padding: 0; margin: 0; }
+  .rank-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 14px;
+    margin: 6px 2px;
+    background: var(--cream);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    cursor: grab;
+    transition: box-shadow 0.18s ease, transform 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+    user-select: none;
+    position: relative;
+  }
+  .rank-item:hover {
+    border-color: var(--gold);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+  .rank-item.dragging {
+    opacity: 0.45;
+    cursor: grabbing;
+    box-shadow: var(--shadow-lg);
+    transform: scale(1.01);
+  }
+  .rank-item.drag-over {
+    border-color: var(--gold);
+    background: var(--cream-2);
+  }
+  .rank-item.top-choice {
+    background: var(--navy);
+    border-color: var(--gold);
+  }
+  .rank-item.top-choice .name { color: var(--cream); }
+  .rank-item.top-choice .name .accent { color: var(--gold); }
+  .rank-item.top-choice .tag { color: rgba(251, 247, 240, 0.75); }
+
+  .rank-pill {
+    flex: 0 0 auto;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--cream-2); color: var(--muted);
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 16px;
+    letter-spacing: -0.02em;
+    transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .rank-item .rank-pill { background: var(--gold); color: var(--navy); border-color: var(--gold); box-shadow: 0 2px 8px rgba(212, 167, 90, 0.35); }
+  .rank-item.top-choice .rank-pill { background: var(--gold); color: var(--navy); border-color: var(--gold); box-shadow: 0 4px 16px rgba(212, 167, 90, 0.5); }
+
+  .drag-handle {
+    flex: 0 0 auto;
+    color: var(--muted); font-size: 20px;
+    padding: 4px;
+    line-height: 1; letter-spacing: -3px;
+    cursor: grab;
+  }
+  .rank-item:hover .drag-handle { color: var(--terra); }
+  .rank-item.top-choice .drag-handle { color: rgba(251, 247, 240, 0.6); }
+
+  .name-block { flex: 1 1 auto; min-width: 0; }
+  .name {
+    font-weight: 900; font-size: 18px; line-height: 1.15;
+    letter-spacing: -0.02em; color: var(--navy); margin: 0 0 2px;
+  }
+  .name .accent { color: var(--gold); font-weight: 700; }
+  .tag { font-size: 13px; color: var(--muted); font-style: italic; line-height: 1.35; margin: 0; }
+
+  .move-btns {
+    display: flex; flex-direction: column; gap: 4px;
+    flex: 0 0 auto;
+  }
+  .move-btn {
+    width: 30px; height: 26px;
+    border: 1px solid var(--border);
+    background: white; color: var(--navy);
+    border-radius: 6px;
+    font-size: 12px; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.12s ease, border-color 0.12s ease;
+    padding: 0;
+  }
+  .move-btn:hover:not(:disabled) { background: var(--cream-2); border-color: var(--gold); }
+  .move-btn:active:not(:disabled) { background: var(--gold); }
+  .move-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .rank-item.top-choice .move-btn { background: rgba(251, 247, 240, 0.1); border-color: rgba(251, 247, 240, 0.2); color: var(--cream); }
+  .rank-item.top-choice .move-btn:hover:not(:disabled) { background: rgba(251, 247, 240, 0.18); border-color: var(--gold); }
+
+  /* Results-mode position grid stays available below each rank-item when in results-mode. */
+  .position-grid {
+    margin-top: 8px; display: none;
+    grid-template-columns: repeat(6, 1fr); gap: 4px;
+    width: 100%;
+  }
+  body.results-mode .position-grid { display: grid; }
+  .position-cell {
+    height: 6px; border-radius: 2px;
+    background: var(--cream-2); position: relative; overflow: hidden;
+  }
+  .position-cell .fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: var(--gold); width: 0%;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .position-key {
+    margin-top: 6px; font-size: 10px; color: var(--muted);
+    display: none; letter-spacing: 0.04em;
+  }
+  body.results-mode .position-key { display: block; }
+
+  .extras { margin-top: 24px; display: flex; flex-direction: column; gap: 14px; }
+  .field-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--terra);
+    margin-bottom: 6px; display: block;
+  }
+  .field input, .field textarea {
+    width: 100%; background: white;
+    border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 12px 14px; font-size: 15px; color: var(--ink);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    font-family: inherit; resize: vertical;
+  }
+  .field input:focus, .field textarea:focus {
+    outline: none; border-color: var(--navy);
+    box-shadow: 0 0 0 3px rgba(26, 41, 66, 0.1);
+  }
+  .field textarea { min-height: 64px; }
+
+  .submit {
+    margin-top: 32px; width: 100%;
+    background: var(--navy); color: var(--cream);
+    font-size: 17px; font-weight: 700; padding: 18px 24px;
+    border-radius: 12px; letter-spacing: -0.01em;
+    transition: all 0.2s ease; box-shadow: var(--shadow-md); position: relative;
+  }
+  .submit:hover:not(:disabled) {
+    background: var(--navy-2); transform: translateY(-1px); box-shadow: var(--shadow-lg);
+  }
+  .submit:disabled {
+    background: var(--cream-2); color: var(--muted); cursor: not-allowed; box-shadow: none;
+  }
+  .submit.loading { color: transparent; pointer-events: none; }
+  .submit.loading::after {
+    content: ''; position: absolute; top: 50%; left: 50%;
+    width: 20px; height: 20px; margin: -10px 0 0 -10px;
+    border: 2.5px solid rgba(251, 247, 240, 0.3);
+    border-top-color: var(--cream); border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .thanks { display: none; text-align: center; padding: 40px 0 20px; animation: fadeUp 0.5s ease-out; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  body.thanks-mode .vote-ui { display: none; }
+  body.thanks-mode .thanks { display: block; }
+  .thanks .check {
+    width: 64px; height: 64px; background: var(--gold); color: var(--navy);
+    border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 32px; font-weight: 900; margin-bottom: 20px;
+  }
+  .thanks h2 {
+    font-weight: 900; font-size: 32px; color: var(--navy);
+    letter-spacing: -0.025em; margin: 0 0 8px;
+  }
+  .thanks p { color: var(--muted); font-size: 15px; margin: 0 0 28px; line-height: 1.5; }
+  .thanks .live-results-link {
+    display: inline-block; margin-top: 20px; font-size: 14px;
+    color: var(--terra); font-weight: 700; letter-spacing: 0.05em;
+    text-decoration: none; border-bottom: 2px solid var(--terra);
+    padding-bottom: 2px; cursor: pointer;
+  }
+  .thanks .live-results-link:hover { color: var(--navy); border-bottom-color: var(--navy); }
+
+  .closed-banner {
+    display: none; padding: 24px 20px; background: var(--cream-2);
+    border-radius: 14px; border: 1.5px solid var(--border);
+    text-align: center; margin: 24px 0;
+  }
+  body.closed-mode .vote-ui .extras,
+  body.closed-mode .vote-ui .submit,
+  body.closed-mode .vote-ui .ranking-status,
+  body.closed-mode .vote-ui .shuffle-btn { display: none; }
+  body.closed-mode .closed-banner { display: block; }
+  body.closed-mode .rank-item { cursor: default; pointer-events: none; }
+  body.closed-mode .rank-item:hover { transform: none; box-shadow: none; border-color: var(--border); }
+
+  .footer {
+    margin-top: 40px; padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 12px; color: var(--muted); line-height: 1.5; text-align: center;
+  }
+  .footer strong { color: var(--navy); font-weight: 700; }
+
+  /* Mobile: hide drag-handle hint, show buttons only. Drag still works on long-press but arrows are primary. */
+  @media (max-width: 520px) {
+    .name { font-size: 16px; }
+    .rank-item { padding: 12px 10px; gap: 8px; }
+    .rank-pill { width: 32px; height: 32px; font-size: 14px; }
+    .drag-handle { display: none; }
+  }
+
+  .opt-visual { margin: 10px 0 4px; }
+  .opt-visual .chips { display: flex; gap: 8px; }
+  .opt-visual .chip { flex: 1; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 14px 6px 9px; border: 1px solid rgba(0,0,0,.18); }
+  .opt-visual .chip .cap { font-size: 9.5px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; margin-top: 7px; }
+  .opt-visual svg { display: block; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="vote-ui">
+    <div class="eyebrow">LegalOwl brand vote · takes 30 seconds</div>
+    <div class="title-row">
+      <h1 class="title">Pick the <em>owl.</em></h1>
+      
+    </div>
+    <p class="lede">Drag into your order — favorite on top.</p>
+    
+    <div class="context-blurb">Last one. LegalOwl's mark is an owl — six designs made the shortlist. Each shows on light and dark. Rank them; your #1 carries the most weight. Vote 3 of 3.</div>
+    
+    
+    <div class="deadline-pill">Voting closes Saturday, June 6 at 8:00 PM</div>
+    
+    <div class="how-to">
+      <strong>How to rank:</strong> drag the rows to put them in order (or use the up/down arrows on mobile). <strong>#1 = your top priority.</strong> Initial order is randomized so the first card doesn&rsquo;t bias your pick.
+    </div>
+    <div class="live-badge" id="liveBadge">
+      <span class="dot"></span>
+      <span id="liveBadgeText">Loading vote count&hellip;</span>
+    </div>
+
+    <div class="closed-banner" id="closedBanner">
+      <div class="eyebrow" style="justify-content: center;">Voting closed</div>
+      <p style="margin: 8px 0 0; color: var(--ink); font-weight: 500;">Final tally below.</p>
+    </div>
+
+    <div class="ranking-status">
+      <div class="count"><strong>6</strong> options &middot; drag to reorder</div>
+      <button class="shuffle-btn" id="shuffleBtn" type="button">Shuffle order</button>
+    </div>
+
+    <div class="rank-list-wrap">
+      <div class="rank-list-head">
+        <span>Your ranking</span>
+        <span>Top &darr; Bottom</span>
+      </div>
+      <ul id="rankList" class="rank-list" aria-label="Drag to rank options"></ul>
+    </div>
+
+    <div class="extras">
+      <div class="field">
+        <label class="field-label" for="comment">Why this order? (optional)</label>
+        <textarea id="comment" rows="2" placeholder="One sentence is plenty."></textarea>
+      </div>
+      <div class="field">
+        <label class="field-label" for="name">Your name (optional)</label>
+        <input id="name" type="text" placeholder="So Jeremy knows it's you" autocomplete="name">
+      </div>
+    </div>
+
+    <button class="submit" id="submitBtn">Cast vote</button>
+
+    <div class="footer">Votes write to <strong>Jeremy's tally sheet</strong>. No accounts, no tracking, no spam.</div>
+  </div>
+
+  <div class="thanks" id="thanks">
+    <div class="check">&check;</div>
+    <h2>Vote logged.</h2>
+    <p>That's all three — thank you. Jeremy sees the full tally and picks the winners.</p>
+    <a class="live-results-link" id="seeResults">See the running tally &rarr;</a>
+  </div>
+</div>
+
+<script>
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyiknnInZnd4fZS8cBb4qu1-0KNE3JNJ39JuRMpCVDzRUVSJq2xyyMVJ890z5yMY5ywkQ/exec";
+  const VALID_OPTION_IDS = ["crest", "medallion", "minim", "nightglow", "sage", "scholar"];
+  const DEADLINE_ISO = "2026-06-06T20:00:00-07:00";
+  const MAX_POSITION = 6;
+
+  // v1.3 — recipient token, read from `?v=<token>` in the URL when present.
+  const VOTE_TOKEN = (function() {
+    try {
+      const p = new URLSearchParams(window.location.search);
+      return (p.get('v') || '').trim();
+    } catch (e) { return ''; }
+  })();
+
+  // Page-view beacon — fires once on load when a token is present.
+  if (VOTE_TOKEN && APPS_SCRIPT_URL) {
+    try {
+      fetch(APPS_SCRIPT_URL + '?action=opened&v=' + encodeURIComponent(VOTE_TOKEN), {
+        method: 'GET',
+        mode: 'no-cors'
+      }).catch(function(){});
+    } catch (e) { /* silently fail */ }
+  }
+
+  // Option metadata, server-rendered so JS can rebuild rank-items after shuffle/reorder.
+  const VISUALS = {"crest": "<div class=\"chips\"><div class=\"chip\" style=\"background:#efe6d4\"><svg width=\"70\" height=\"70\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\"><g fill=\"#3a2c1d\"><path d=\"M28 26 L24 8 L42 22 Z\"/><path d=\"M72 26 L76 8 L58 22 Z\"/><path d=\"M50 16 C30 16 17 32 17 54 C17 74 30 88 50 96 C70 88 83 74 83 54 C83 32 70 16 50 16 Z\"/></g><circle cx=\"50\" cy=\"50\" r=\"30\" fill=\"#efe6d4\"/><path d=\"M32.6 47.3 L21.0 44.2\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".55\"/><path d=\"M34.4 43.0 L24.0 37.0\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".55\"/><path d=\"M37.3 39.3 L28.8 30.8\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".55\"/><path d=\"M41.0 36.4 L35.0 26.0\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".55\"/><path d=\"M45.3 34.6 L42.2 23.0\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".55\"/><path d=\"M50.0 34.0 L50.0 22.0\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".55\"/><path d=\"M54.7 34.6 L57.8 23.0\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".55\"/><path d=\"M59.0 36.4 L65.0 26.0\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".55\"/><path d=\"M62.7 39.3 L71.2 30.8\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".55\"/><path d=\"M65.6 43.0 L76.0 37.0\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".55\"/><path d=\"M67.4 47.3 L79.0 44.2\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".55\"/><circle cx=\"37\" cy=\"48\" r=\"11\" fill=\"#3a2c1d\"/><circle cx=\"63\" cy=\"48\" r=\"11\" fill=\"#3a2c1d\"/><circle cx=\"37\" cy=\"48\" r=\"7\" fill=\"#c8a560\"/><circle cx=\"63\" cy=\"48\" r=\"7\" fill=\"#c8a560\"/><circle cx=\"37\" cy=\"48\" r=\"2.6\" fill=\"#3a2c1d\"/><circle cx=\"63\" cy=\"48\" r=\"2.6\" fill=\"#3a2c1d\"/><path d=\"M50 55 L45 62 Q50 66 55 62 Z\" fill=\"#c8a560\"/></svg><span class=\"cap\" style=\"color:#8a7559\">Light</span></div><div class=\"chip\" style=\"background:#1b1510\"><svg width=\"70\" height=\"70\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\"><g fill=\"#e8dcc4\"><path d=\"M28 26 L24 8 L42 22 Z\"/><path d=\"M72 26 L76 8 L58 22 Z\"/><path d=\"M50 16 C30 16 17 32 17 54 C17 74 30 88 50 96 C70 88 83 74 83 54 C83 32 70 16 50 16 Z\"/></g><circle cx=\"50\" cy=\"50\" r=\"30\" fill=\"#211a14\"/><path d=\"M32.6 47.3 L21.0 44.2\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".55\"/><path d=\"M34.4 43.0 L24.0 37.0\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".55\"/><path d=\"M37.3 39.3 L28.8 30.8\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".55\"/><path d=\"M41.0 36.4 L35.0 26.0\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".55\"/><path d=\"M45.3 34.6 L42.2 23.0\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".55\"/><path d=\"M50.0 34.0 L50.0 22.0\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".55\"/><path d=\"M54.7 34.6 L57.8 23.0\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".55\"/><path d=\"M59.0 36.4 L65.0 26.0\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".55\"/><path d=\"M62.7 39.3 L71.2 30.8\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".55\"/><path d=\"M65.6 43.0 L76.0 37.0\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".55\"/><path d=\"M67.4 47.3 L79.0 44.2\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".55\"/><circle cx=\"37\" cy=\"48\" r=\"11\" fill=\"#e8dcc4\"/><circle cx=\"63\" cy=\"48\" r=\"11\" fill=\"#e8dcc4\"/><circle cx=\"37\" cy=\"48\" r=\"7\" fill=\"#c8a560\"/><circle cx=\"63\" cy=\"48\" r=\"7\" fill=\"#c8a560\"/><circle cx=\"37\" cy=\"48\" r=\"2.6\" fill=\"#211a14\"/><circle cx=\"63\" cy=\"48\" r=\"2.6\" fill=\"#211a14\"/><path d=\"M50 55 L45 62 Q50 66 55 62 Z\" fill=\"#c8a560\"/></svg><span class=\"cap\" style=\"color:#c3b29a\">Dark</span></div></div>", "medallion": "<div class=\"chips\"><div class=\"chip\" style=\"background:#efe6d4\"><svg width=\"96\" height=\"96\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\"><defs><radialGradient id=\"medous6ohd\" cx=\"50%\" cy=\"44%\" r=\"62%\"><stop offset=\"0%\" stop-color=\"#f3ecdd\"/><stop offset=\"100%\" stop-color=\"#e4d8bf\"/></radialGradient><pattern id=\"medous6ohh\" width=\"8\" height=\"8\" patternUnits=\"userSpaceOnUse\" patternTransform=\"rotate(35)\"><line x1=\"0\" y1=\"0\" x2=\"0\" y2=\"8\" stroke=\"rgba(58,44,29,0.16)\" stroke-width=\"1\"/></pattern><clipPath id=\"medous6ohc\"><circle cx=\"50\" cy=\"50\" r=\"40\"/></clipPath><filter id=\"medous6ohg\" x=\"-80%\" y=\"-80%\" width=\"260%\" height=\"260%\"><feGaussianBlur stdDeviation=\"2.496\"/></filter></defs><circle cx=\"50\" cy=\"50\" r=\"48.5\" fill=\"url(#medous6ohd)\"/><g clip-path=\"url(#medous6ohc)\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"url(#medous6ohh)\"/></g><circle cx=\"50\" cy=\"50\" r=\"46\" fill=\"none\" stroke=\"#b8923f\" stroke-width=\"1.6\"/><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"none\" stroke=\"#b8923f\" stroke-width=\"0.9\" opacity=\"0.65\"/><path d=\"M50 41 L39 27 Q36 38 33 43 Q27 49 27 58 C27 72 38 81 50 81 C62 81 73 72 73 58 Q73 49 67 43 Q64 38 61 27 Z\" fill=\"#2c2114\"/><circle cx=\"41\" cy=\"55\" r=\"8\" fill=\"#d9b873\" filter=\"url(#medous6ohg)\" opacity=\"0.75\"/><circle cx=\"59\" cy=\"55\" r=\"8\" fill=\"#d9b873\" filter=\"url(#medous6ohg)\" opacity=\"0.75\"/><circle cx=\"41\" cy=\"55\" r=\"5.4\" fill=\"#c8a560\"/><circle cx=\"59\" cy=\"55\" r=\"5.4\" fill=\"#c8a560\"/><circle cx=\"41\" cy=\"55\" r=\"1.8\" fill=\"#2c2114\"/><circle cx=\"59\" cy=\"55\" r=\"1.8\" fill=\"#2c2114\"/><path d=\"M50 61 L46.5 66 Q50 69 53.5 66 Z\" fill=\"#b8923f\"/></svg><span class=\"cap\" style=\"color:#8a7559\">Light</span></div><div class=\"chip\" style=\"background:#1b1510\"><svg width=\"96\" height=\"96\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\"><defs><radialGradient id=\"medxxs9qzd\" cx=\"50%\" cy=\"44%\" r=\"62%\"><stop offset=\"0%\" stop-color=\"#1c2c3f\"/><stop offset=\"100%\" stop-color=\"#0c1622\"/></radialGradient><pattern id=\"medxxs9qzh\" width=\"8\" height=\"8\" patternUnits=\"userSpaceOnUse\" patternTransform=\"rotate(35)\"><line x1=\"0\" y1=\"0\" x2=\"0\" y2=\"8\" stroke=\"rgba(200,165,96,0.10)\" stroke-width=\"1\"/></pattern><clipPath id=\"medxxs9qzc\"><circle cx=\"50\" cy=\"50\" r=\"40\"/></clipPath><filter id=\"medxxs9qzg\" x=\"-80%\" y=\"-80%\" width=\"260%\" height=\"260%\"><feGaussianBlur stdDeviation=\"2.496\"/></filter></defs><circle cx=\"50\" cy=\"50\" r=\"48.5\" fill=\"url(#medxxs9qzd)\"/><g clip-path=\"url(#medxxs9qzc)\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"url(#medxxs9qzh)\"/></g><circle cx=\"50\" cy=\"50\" r=\"46\" fill=\"none\" stroke=\"#c8a560\" stroke-width=\"1.6\"/><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"none\" stroke=\"#c8a560\" stroke-width=\"0.9\" opacity=\"0.65\"/><path d=\"M50 41 L39 27 Q36 38 33 43 Q27 49 27 58 C27 72 38 81 50 81 C62 81 73 72 73 58 Q73 49 67 43 Q64 38 61 27 Z\" fill=\"#0a1320\"/><circle cx=\"41\" cy=\"55\" r=\"8\" fill=\"#e6a93c\" filter=\"url(#medxxs9qzg)\" opacity=\"0.75\"/><circle cx=\"59\" cy=\"55\" r=\"8\" fill=\"#e6a93c\" filter=\"url(#medxxs9qzg)\" opacity=\"0.75\"/><circle cx=\"41\" cy=\"55\" r=\"5.4\" fill=\"#f0b54a\"/><circle cx=\"59\" cy=\"55\" r=\"5.4\" fill=\"#f0b54a\"/><circle cx=\"41\" cy=\"55\" r=\"1.8\" fill=\"#0b121c\"/><circle cx=\"59\" cy=\"55\" r=\"1.8\" fill=\"#0b121c\"/><path d=\"M50 61 L46.5 66 Q50 69 53.5 66 Z\" fill=\"#e6a93c\"/></svg><span class=\"cap\" style=\"color:#c3b29a\">Dark</span></div></div>", "minim": "<div class=\"chips\"><div class=\"chip\" style=\"background:#efe6d4\"><svg width=\"70\" height=\"70\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\"><g fill=\"#3a2c1d\"><path d=\"M27 24 L31 6 L44 19 Z\"/><path d=\"M73 24 L69 6 L56 19 Z\"/><path d=\"M50 16 C29 16 15 33 15 55 C15 80 31 95 50 95 C69 95 85 80 85 55 C85 33 71 16 50 16 Z\"/></g><circle cx=\"50\" cy=\"52\" r=\"29\" fill=\"#efe6d4\"/><path d=\"M33.6 47.6 L23.0 44.8\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".5\"/><path d=\"M35.3 43.5 L25.8 38.0\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".5\"/><path d=\"M38.0 40.0 L30.2 32.2\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".5\"/><path d=\"M41.5 37.3 L36.0 27.8\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".5\"/><path d=\"M45.6 35.6 L42.8 25.0\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".5\"/><path d=\"M50.0 35.0 L50.0 24.0\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".5\"/><path d=\"M54.4 35.6 L57.2 25.0\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".5\"/><path d=\"M58.5 37.3 L64.0 27.8\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".5\"/><path d=\"M62.0 40.0 L69.8 32.2\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".5\"/><path d=\"M64.7 43.5 L74.2 38.0\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".5\"/><path d=\"M66.4 47.6 L77.0 44.8\" stroke=\"#3a2c1d\" stroke-width=\"1.3\" opacity=\".5\"/><circle cx=\"37\" cy=\"50\" r=\"11\" fill=\"#3a2c1d\"/><circle cx=\"63\" cy=\"50\" r=\"11\" fill=\"#3a2c1d\"/><circle cx=\"37\" cy=\"50\" r=\"7\" fill=\"#c8a560\"/><circle cx=\"63\" cy=\"50\" r=\"7\" fill=\"#c8a560\"/><circle cx=\"37\" cy=\"50\" r=\"3\" fill=\"#3a2c1d\"/><circle cx=\"63\" cy=\"50\" r=\"3\" fill=\"#3a2c1d\"/><path d=\"M50 57 L45 64 Q50 68 55 64 Z\" fill=\"#c8a560\"/></svg><span class=\"cap\" style=\"color:#8a7559\">Light</span></div><div class=\"chip\" style=\"background:#1b1510\"><svg width=\"70\" height=\"70\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\"><g fill=\"#e8dcc4\"><path d=\"M27 24 L31 6 L44 19 Z\"/><path d=\"M73 24 L69 6 L56 19 Z\"/><path d=\"M50 16 C29 16 15 33 15 55 C15 80 31 95 50 95 C69 95 85 80 85 55 C85 33 71 16 50 16 Z\"/></g><circle cx=\"50\" cy=\"52\" r=\"29\" fill=\"#211a14\"/><path d=\"M33.6 47.6 L23.0 44.8\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".5\"/><path d=\"M35.3 43.5 L25.8 38.0\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".5\"/><path d=\"M38.0 40.0 L30.2 32.2\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".5\"/><path d=\"M41.5 37.3 L36.0 27.8\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".5\"/><path d=\"M45.6 35.6 L42.8 25.0\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".5\"/><path d=\"M50.0 35.0 L50.0 24.0\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".5\"/><path d=\"M54.4 35.6 L57.2 25.0\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".5\"/><path d=\"M58.5 37.3 L64.0 27.8\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".5\"/><path d=\"M62.0 40.0 L69.8 32.2\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".5\"/><path d=\"M64.7 43.5 L74.2 38.0\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".5\"/><path d=\"M66.4 47.6 L77.0 44.8\" stroke=\"#e8dcc4\" stroke-width=\"1.3\" opacity=\".5\"/><circle cx=\"37\" cy=\"50\" r=\"11\" fill=\"#e8dcc4\"/><circle cx=\"63\" cy=\"50\" r=\"11\" fill=\"#e8dcc4\"/><circle cx=\"37\" cy=\"50\" r=\"7\" fill=\"#c8a560\"/><circle cx=\"63\" cy=\"50\" r=\"7\" fill=\"#c8a560\"/><circle cx=\"37\" cy=\"50\" r=\"3\" fill=\"#211a14\"/><circle cx=\"63\" cy=\"50\" r=\"3\" fill=\"#211a14\"/><path d=\"M50 57 L45 64 Q50 68 55 64 Z\" fill=\"#c8a560\"/></svg><span class=\"cap\" style=\"color:#c3b29a\">Dark</span></div></div>", "nightglow": "<div class=\"chips\"><div class=\"chip\" style=\"background:#0f1722\"><svg width=\"74\" height=\"74\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\"><defs><filter id=\"g74\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feGaussianBlur stdDeviation=\"3.2\"/></filter></defs><g fill=\"#2c3c4f\"><path d=\"M27 24 L31 6 L44 19 Z\"/><path d=\"M73 24 L69 6 L56 19 Z\"/><path d=\"M50 16 C29 16 15 33 15 55 C15 80 31 95 50 95 C69 95 85 80 85 55 C85 33 71 16 50 16 Z\"/></g><circle cx=\"35\" cy=\"50\" r=\"15\" fill=\"#16222f\"/><circle cx=\"65\" cy=\"50\" r=\"15\" fill=\"#16222f\"/><circle cx=\"35\" cy=\"50\" r=\"9.5\" fill=\"#e6a93c\" filter=\"url(#g74)\" opacity=\".7\"/><circle cx=\"65\" cy=\"50\" r=\"9.5\" fill=\"#e6a93c\" filter=\"url(#g74)\" opacity=\".7\"/><circle cx=\"35\" cy=\"50\" r=\"8\" fill=\"#f0b54a\"/><circle cx=\"65\" cy=\"50\" r=\"8\" fill=\"#f0b54a\"/><circle cx=\"35\" cy=\"50\" r=\"3\" fill=\"#10222e\"/><circle cx=\"65\" cy=\"50\" r=\"3\" fill=\"#10222e\"/><path d=\"M50 56 L44 64 Q50 70 56 64 Z\" fill=\"#e6a93c\"/></svg><span class=\"cap\" style=\"color:#9aa6b4\">Nightglow</span></div><div class=\"chip\" style=\"background:#1b1510\"><svg width=\"74\" height=\"74\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M22 34 L28 7 L41 23 C44 20 56 20 59 23 L72 7 L78 34 C86 46 85 64 76 80 C68 92 32 92 24 80 C15 64 14 46 22 34 Z\" fill=\"#46311f\" stroke=\"#e6a93c\" stroke-width=\"2.6\" stroke-linejoin=\"round\"/><path d=\"M28 41 Q50 33 72 41\" fill=\"none\" stroke=\"#e6a93c\" stroke-width=\"1.6\" opacity=\".7\" stroke-linecap=\"round\"/><circle cx=\"37\" cy=\"50\" r=\"10.5\" fill=\"#f0b54a\"/><circle cx=\"63\" cy=\"50\" r=\"10.5\" fill=\"#f0b54a\"/><circle cx=\"37\" cy=\"50\" r=\"3.6\" fill=\"#0f1722\"/><circle cx=\"63\" cy=\"50\" r=\"3.6\" fill=\"#0f1722\"/><path d=\"M50 56 L45 63 Q50 67 55 63 Z\" fill=\"#e6a93c\"/><g stroke=\"#e6a93c\" stroke-width=\"1.3\" opacity=\".45\" fill=\"none\" stroke-linecap=\"round\"><path d=\"M32 74 Q50 79 68 74\"/><path d=\"M35 81 Q50 85 65 81\"/></g></svg><span class=\"cap\" style=\"color:#c3b29a\">Ember</span></div></div>", "sage": "<div class=\"chips\"><div class=\"chip\" style=\"background:#efe6d4\"><svg width=\"70\" height=\"70\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\"><g fill=\"#3a2c1d\"><path d=\"M27 24 L31 6 L44 19 Z\"/><path d=\"M73 24 L69 6 L56 19 Z\"/><path d=\"M50 16 C29 16 15 33 15 55 C15 80 31 95 50 95 C69 95 85 80 85 55 C85 33 71 16 50 16 Z\"/></g><circle cx=\"35\" cy=\"50\" r=\"15\" fill=\"#efe6d4\"/><circle cx=\"65\" cy=\"50\" r=\"15\" fill=\"#efe6d4\"/><circle cx=\"35\" cy=\"50\" r=\"9\" fill=\"#c8a560\"/><circle cx=\"65\" cy=\"50\" r=\"9\" fill=\"#c8a560\"/><circle cx=\"35\" cy=\"50\" r=\"3.4\" fill=\"#3a2c1d\"/><circle cx=\"65\" cy=\"50\" r=\"3.4\" fill=\"#3a2c1d\"/><path d=\"M50 56 L44 64 Q50 70 56 64 Z\" fill=\"#c8a560\"/><g stroke=\"#efe6d4\" stroke-width=\"1.4\" opacity=\".5\" fill=\"none\" stroke-linecap=\"round\"><path d=\"M30 74 Q50 80 70 74\"/><path d=\"M33 81 Q50 86 67 81\"/><path d=\"M37 88 Q50 92 63 88\"/></g></svg><span class=\"cap\" style=\"color:#8a7559\">Light</span></div><div class=\"chip\" style=\"background:#1b1510\"><svg width=\"70\" height=\"70\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\"><g fill=\"#e8dcc4\"><path d=\"M27 24 L31 6 L44 19 Z\"/><path d=\"M73 24 L69 6 L56 19 Z\"/><path d=\"M50 16 C29 16 15 33 15 55 C15 80 31 95 50 95 C69 95 85 80 85 55 C85 33 71 16 50 16 Z\"/></g><circle cx=\"35\" cy=\"50\" r=\"15\" fill=\"#211a14\"/><circle cx=\"65\" cy=\"50\" r=\"15\" fill=\"#211a14\"/><circle cx=\"35\" cy=\"50\" r=\"9\" fill=\"#c8a560\"/><circle cx=\"65\" cy=\"50\" r=\"9\" fill=\"#c8a560\"/><circle cx=\"35\" cy=\"50\" r=\"3.4\" fill=\"#211a14\"/><circle cx=\"65\" cy=\"50\" r=\"3.4\" fill=\"#211a14\"/><path d=\"M50 56 L44 64 Q50 70 56 64 Z\" fill=\"#c8a560\"/><g stroke=\"#211a14\" stroke-width=\"1.4\" opacity=\".5\" fill=\"none\" stroke-linecap=\"round\"><path d=\"M30 74 Q50 80 70 74\"/><path d=\"M33 81 Q50 86 67 81\"/><path d=\"M37 88 Q50 92 63 88\"/></g></svg><span class=\"cap\" style=\"color:#c3b29a\">Dark</span></div></div>", "scholar": "<div class=\"chips\"><div class=\"chip\" style=\"background:#efe6d4\"><svg width=\"82\" height=\"82\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\">\n    <g fill=\"none\" stroke=\"#3a2c1d\" stroke-width=\"3.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n      <path d=\"M24 26 Q21 9 33 5 Q38 14 42 22\"/><path d=\"M76 26 Q79 9 67 5 Q62 14 58 22\"/>\n      <circle cx=\"50\" cy=\"50\" r=\"37\"/>\n    </g>\n    <g fill=\"none\" stroke=\"#3a2c1d\" stroke-width=\"2\" stroke-linecap=\"round\" opacity=\".9\">\n      <path d=\"M27 34 Q37 28 46 34\"/><path d=\"M54 34 Q63 28 73 34\"/>\n    </g>\n    <circle cx=\"37\" cy=\"49\" r=\"7.6\" fill=\"#c8a560\"/><circle cx=\"63\" cy=\"49\" r=\"7.6\" fill=\"#c8a560\"/>\n    <circle cx=\"38.5\" cy=\"48\" r=\"3\" fill=\"#3a2c1d\"/><circle cx=\"61.5\" cy=\"48\" r=\"3\" fill=\"#3a2c1d\"/>\n    <circle cx=\"40\" cy=\"46\" r=\"1.2\" fill=\"#3a2c1d\"/><circle cx=\"63\" cy=\"46\" r=\"1.2\" fill=\"#3a2c1d\"/>\n    <g fill=\"none\" stroke=\"#9c7a32\" stroke-width=\"2.5\" stroke-linecap=\"round\">\n      <circle cx=\"37\" cy=\"49\" r=\"11.5\"/><circle cx=\"63\" cy=\"49\" r=\"11.5\"/>\n      <path d=\"M25.6 47 Q19 44 16 47\"/><path d=\"M74.4 47 Q81 44 84 47\"/>\n    </g>\n    <path d=\"M50 49 L46 60 Q50 64 54 60 Z\" fill=\"#9c7a32\" stroke=\"#9c7a32\" stroke-width=\"1.5\" stroke-linejoin=\"round\"/></svg><span class=\"cap\" style=\"color:#8a7559\">Light</span></div><div class=\"chip\" style=\"background:#1b1510\"><svg width=\"82\" height=\"82\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\">\n    <g fill=\"none\" stroke=\"#e8dcc4\" stroke-width=\"3.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n      <path d=\"M24 26 Q21 9 33 5 Q38 14 42 22\"/><path d=\"M76 26 Q79 9 67 5 Q62 14 58 22\"/>\n      <circle cx=\"50\" cy=\"50\" r=\"37\"/>\n    </g>\n    <g fill=\"none\" stroke=\"#e8dcc4\" stroke-width=\"2\" stroke-linecap=\"round\" opacity=\".9\">\n      <path d=\"M27 34 Q37 28 46 34\"/><path d=\"M54 34 Q63 28 73 34\"/>\n    </g>\n    <circle cx=\"37\" cy=\"49\" r=\"7.6\" fill=\"#c8a560\"/><circle cx=\"63\" cy=\"49\" r=\"7.6\" fill=\"#c8a560\"/>\n    <circle cx=\"38.5\" cy=\"48\" r=\"3\" fill=\"#211a14\"/><circle cx=\"61.5\" cy=\"48\" r=\"3\" fill=\"#211a14\"/>\n    <circle cx=\"40\" cy=\"46\" r=\"1.2\" fill=\"#e8dcc4\"/><circle cx=\"63\" cy=\"46\" r=\"1.2\" fill=\"#e8dcc4\"/>\n    <g fill=\"none\" stroke=\"#c8a560\" stroke-width=\"2.5\" stroke-linecap=\"round\">\n      <circle cx=\"37\" cy=\"49\" r=\"11.5\"/><circle cx=\"63\" cy=\"49\" r=\"11.5\"/>\n      <path d=\"M25.6 47 Q19 44 16 47\"/><path d=\"M74.4 47 Q81 44 84 47\"/>\n    </g>\n    <path d=\"M50 49 L46 60 Q50 64 54 60 Z\" fill=\"#c8a560\" stroke=\"#c8a560\" stroke-width=\"1.5\" stroke-linejoin=\"round\"/></svg><span class=\"cap\" style=\"color:#c3b29a\">Dark</span></div></div>"};
+  const OPTIONS = [
+    
+    {
+      id: "crest",
+      label: "Crest",
+      accent: "",
+      tag: "Heraldic \u2014 engraved rays around the face."
+    },
+    
+    {
+      id: "medallion",
+      label: "Medallion",
+      accent: "",
+      tag: "Hero seal \u2014 notched ears, glowing amber eyes, etched disc."
+    },
+    
+    {
+      id: "minim",
+      label: "Minim",
+      accent: "",
+      tag: "Quiet silhouette with an engraved facial disk."
+    },
+    
+    {
+      id: "nightglow",
+      label: "Nightglow \u0026 Ember",
+      accent: "",
+      tag: "Night-sky glow + a hot-ember eye variant."
+    },
+    
+    {
+      id: "sage",
+      label: "Sage",
+      accent: "",
+      tag: "Round, calm, wide-eyed \u2014 the friendly scholar."
+    },
+    
+    {
+      id: "scholar",
+      label: "Scholar",
+      accent: "",
+      tag: "Upright and bookish \u2014 the engraved professor."
+    }
+    
+  ];
+
+  // ===================== STATE =====================
+  let order = shuffle(OPTIONS.map(o => o.id));
+  let voteClosed = false;
+  let dragSrcId = null;
+
+  // ===================== INIT =====================
+  document.addEventListener('DOMContentLoaded', () => {
+    checkDeadline();
+    renderList();
+    document.getElementById('shuffleBtn').addEventListener('click', () => {
+      order = shuffle(order);
+      renderList();
+    });
+    document.getElementById('submitBtn').addEventListener('click', submit);
+    document.getElementById('seeResults').addEventListener('click', revealResults);
+    loadTally();
+  });
+
+  // ===================== DEADLINE =====================
+  function checkDeadline() {
+    if (!DEADLINE_ISO) return false;
+    if (new Date() > new Date(DEADLINE_ISO)) {
+      voteClosed = true;
+      document.body.classList.add('closed-mode');
+      document.body.classList.add('results-mode');
+      return true;
+    }
+    return false;
+  }
+
+  // ===================== RENDER =====================
+  function renderList() {
+    const list = document.getElementById('rankList');
+    list.innerHTML = '';
+    order.forEach((id, idx) => {
+      const opt = OPTIONS.find(o => o.id === id);
+      if (!opt) return;
+      const li = document.createElement('li');
+      li.className = 'rank-item' + (idx === 0 ? ' top-choice' : '');
+      li.draggable = !voteClosed;
+      li.dataset.id = id;
+      li.setAttribute('aria-label', `Rank ${idx + 1}: ${opt.label}`);
+      const accentHtml = opt.accent ? `<span class="accent">${escapeHtml(opt.accent)}</span>` : '';
+      const tagHtml = opt.tag ? `<p class="tag">${escapeHtml(opt.tag)}</p>` : '';
+      const positionCells = Array.from({ length: MAX_POSITION }, () =>
+        `<div class="position-cell"><div class="fill"></div></div>`
+      ).join('');
+      li.innerHTML = `
+        <span class="rank-pill">${idx + 1}</span>
+        <span class="drag-handle" aria-hidden="true">&#8942;&#8942;</span>
+        <div class="name-block">
+          <p class="name">${escapeHtml(opt.label)}${accentHtml}</p>
+          ${tagHtml}${VISUALS[id] ? '<div class="opt-visual">'+VISUALS[id]+'</div>' : ''}
+          <div class="position-grid" data-grid="${id}">${positionCells}</div>
+          <div class="position-key">Position 1 &rarr; ${MAX_POSITION}</div>
+        </div>
+        <div class="move-btns">
+          <button type="button" class="move-btn" data-dir="up"   ${idx === 0 ? 'disabled' : ''} aria-label="Move up">&#9650;</button>
+          <button type="button" class="move-btn" data-dir="down" ${idx === order.length - 1 ? 'disabled' : ''} aria-label="Move down">&#9660;</button>
+        </div>
+      `;
+      list.appendChild(li);
+    });
+    if (!voteClosed) {
+      bindDnd();
+      bindMoveBtns();
+    }
+    // Submit is always enabled in ranked mode — every option always has a rank.
+    document.getElementById('submitBtn').disabled = voteClosed;
+  }
+
+  // ===================== DRAG AND DROP =====================
+  function bindDnd() {
+    const list = document.getElementById('rankList');
+    list.querySelectorAll('.rank-item').forEach(el => {
+      el.addEventListener('dragstart', e => {
+        dragSrcId = el.dataset.id;
+        el.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        try { e.dataTransfer.setData('text/plain', el.dataset.id); } catch(_){}
+      });
+      el.addEventListener('dragend', () => {
+        el.classList.remove('dragging');
+        list.querySelectorAll('.drag-over').forEach(n => n.classList.remove('drag-over'));
+        dragSrcId = null;
+      });
+      el.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (!el.classList.contains('dragging')) el.classList.add('drag-over');
+      });
+      el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
+      el.addEventListener('drop', e => {
+        e.preventDefault();
+        el.classList.remove('drag-over');
+        const targetId = el.dataset.id;
+        if (!dragSrcId || dragSrcId === targetId) return;
+        const from = order.indexOf(dragSrcId);
+        const to   = order.indexOf(targetId);
+        order.splice(from, 1);
+        order.splice(to, 0, dragSrcId);
+        renderList();
+      });
+    });
+  }
+
+  // ===================== UP/DOWN BUTTONS =====================
+  function bindMoveBtns() {
+    document.querySelectorAll('.move-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const li = btn.closest('.rank-item');
+        const id = li.dataset.id;
+        const dir = btn.dataset.dir;
+        const idx = order.indexOf(id);
+        if (dir === 'up' && idx > 0) {
+          [order[idx - 1], order[idx]] = [order[idx], order[idx - 1]];
+        } else if (dir === 'down' && idx < order.length - 1) {
+          [order[idx + 1], order[idx]] = [order[idx], order[idx + 1]];
+        }
+        renderList();
+      });
+    });
+  }
+
+  // ===================== TALLY (live + results) =====================
+  async function loadTally() {
+    const liveBadge = document.getElementById('liveBadge');
+    const liveBadgeText = document.getElementById('liveBadgeText');
+    if (!APPS_SCRIPT_URL) {
+      liveBadgeText.textContent = 'Preview mode · backend not yet connected';
+      liveBadge.classList.add('visible');
+      return;
+    }
+    try {
+      const r = await fetch(APPS_SCRIPT_URL);
+      const data = await r.json();
+      if (data.status === 'closed') {
+        voteClosed = true;
+        document.body.classList.add('closed-mode');
+        document.body.classList.add('results-mode');
+        renderList();
+        renderTally(data);
+        liveBadgeText.textContent = (data.total || 0) + ' total votes (closed)';
+        liveBadge.classList.add('visible');
+        return;
+      }
+      const total = data.total || 0;
+      if (total === 0) liveBadgeText.textContent = 'Be the first to vote';
+      else if (total === 1) liveBadgeText.textContent = '1 person has voted so far';
+      else liveBadgeText.textContent = total + ' people have voted so far';
+      liveBadge.classList.add('visible');
+      renderTally(data);
+    } catch (e) { /* silently fail */ }
+  }
+
+  function renderTally(data) {
+    const total = data.total || 0;
+    const heat = data.heat || {};
+    if (!total) return;
+    document.querySelectorAll('.rank-item').forEach(item => {
+      const pid = item.dataset.id;
+      const grid = item.querySelector('[data-grid="' + pid + '"]');
+      if (!grid) return;
+      const cells = grid.querySelectorAll('.position-cell');
+      const optHeat = heat[pid] || {};
+      for (let pos = 1; pos <= MAX_POSITION; pos++) {
+        const count = optHeat[pos] || 0;
+        const pct = total > 0 ? (count / total) * 100 : 0;
+        const cell = cells[pos - 1];
+        if (cell) {
+          const fillEl = cell.querySelector('.fill');
+          if (fillEl) fillEl.style.width = pct + '%';
+        }
+      }
+    });
+  }
+
+  // ===================== SUBMIT =====================
+  async function submit() {
+    if (voteClosed) return;
+    const submitBtn = document.getElementById('submitBtn');
+    const commentEl = document.getElementById('comment');
+    const nameEl = document.getElementById('name');
+    if (!APPS_SCRIPT_URL) {
+      alert('Preview mode — paste the deployed Apps Script URL into index.html to enable submission.');
+      return;
+    }
+    submitBtn.classList.add('loading');
+
+    // ranks: { [optionId]: rankNumber (1-indexed) } — same payload contract as v1.1.
+    const ranksPayload = {};
+    order.forEach((id, idx) => { ranksPayload[id] = idx + 1; });
+
+    const payload = {
+      ranks: ranksPayload,
+      comment: commentEl.value.trim(),
+      name: nameEl.value.trim()
+    };
+    // v1.3 — include token if present (binds vote to recipient row server-side).
+    if (VOTE_TOKEN) payload.token = VOTE_TOKEN;
+
+    let postOk = false;
+    try {
+      const r = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      postOk = r.ok || r.status === 0;
+    } catch (e) {
+      submitBtn.classList.remove('loading');
+      alert("Hmm, that didn't submit. Try again in a moment.");
+      return;
+    }
+    if (!postOk) {
+      submitBtn.classList.remove('loading');
+      alert("Hmm, that didn't submit. Try again in a moment.");
+      return;
+    }
+    // Re-fetch tally via GET to confirm and render — Apps Script POST returns HTML, not JSON.
+    try {
+      const r2 = await fetch(APPS_SCRIPT_URL);
+      const data = await r2.json();
+      document.body.classList.add('thanks-mode');
+      document.body.classList.add('results-mode');
+      renderTally(data);
+    } catch (e) {
+      document.body.classList.add('thanks-mode');
+    }
+  }
+
+  function revealResults() {
+    document.body.classList.remove('thanks-mode');
+    document.body.classList.add('results-mode');
+    document.getElementById('submitBtn').style.display = 'none';
+    document.querySelectorAll('.rank-item').forEach(c => c.style.pointerEvents = 'none');
+    document.querySelector('.extras').style.display = 'none';
+    document.querySelector('.ranking-status').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ===================== UTILS =====================
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+</script>
+
+</body>
+</html>
