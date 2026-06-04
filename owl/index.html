@@ -6,6 +6,8 @@
 <meta name="theme-color" content="#1A2942">
 <title>LegalOwl — The Owl</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://script.google.com">
+
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -454,7 +456,7 @@
       </div>
       <div class="whoshoo-msg" id="whoshooMsg">You&rsquo;re on the list.</div>
     </div>
-    <a class="live-results-link" id="seeResults">See the running tally &rarr;</a>
+    <a class="live-results-link" href="../results/">See the running tally &rarr;</a>
   </div>
 </div>
 
@@ -548,7 +550,6 @@
     renderList();
     
     document.getElementById('submitBtn').addEventListener('click', submit);
-    document.getElementById('seeResults').addEventListener('click', revealResults);
     loadTally();
   });
 
@@ -735,24 +736,15 @@
     // v1.3 — include token if present (binds vote to recipient row server-side).
     if (VOTE_TOKEN) payload.token = VOTE_TOKEN;
 
-    let postOk = false;
+    // Optimistic submit — fire the write with keepalive and show thanks immediately.
     try {
-      const r = await fetch(APPS_SCRIPT_URL, {
+      fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        keepalive: true
       });
-      postOk = r.ok || r.status === 0;
-    } catch (e) {
-      submitBtn.classList.remove('loading');
-      alert("Hmm, that didn't submit. Try again in a moment.");
-      return;
-    }
-    if (!postOk) {
-      submitBtn.classList.remove('loading');
-      alert("Hmm, that didn't submit. Try again in a moment.");
-      return;
-    }
+    } catch (e) {}
     const typedName = nameEl.value.trim();
     if (typedName) {
       window.__voterName = typedName;
@@ -760,12 +752,6 @@
         "That's all three — thank you, " + typedName + ". Jeremy sees the full tally and picks the winners.";
     }
     document.body.classList.add('thanks-mode');
-    // Refresh tally in the background so the results view includes this vote.
-    try {
-      const r2 = await fetch(APPS_SCRIPT_URL);
-      const data = await r2.json();
-      renderTally(data);
-    } catch (e) {}
   }
 
   function revealResults() {
@@ -809,17 +795,15 @@
     btn.addEventListener('click', async () => {
       const email = emailEl.value.trim();
       if (!email || email.indexOf('@') < 1 || email.indexOf('.') < 0) { emailEl.style.borderColor = 'var(--terra)'; return; }
-      btn.disabled = true; btn.textContent = 'Adding\u2026';
       try {
-        const r = await fetch(APPS_SCRIPT_URL, {
+        fetch(APPS_SCRIPT_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ whoshoo: { email: email, name: window.__voterName || '', token: VOTE_TOKEN || '' } })
+          body: JSON.stringify({ whoshoo: { email: email, name: window.__voterName || '', token: VOTE_TOKEN || '' } }),
+          keepalive: true
         });
-        if (r.ok || r.status === 0) {
-          form.classList.remove('open'); chk.disabled = true; msg.classList.add('show');
-        } else { btn.disabled = false; btn.textContent = 'Add me'; }
-      } catch (e) { btn.disabled = false; btn.textContent = 'Add me'; }
+      } catch (e) {}
+      form.classList.remove('open'); chk.disabled = true; msg.classList.add('show');
     });
   })();
 </script>
