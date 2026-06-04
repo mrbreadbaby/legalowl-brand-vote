@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LegalOwl — The Tally</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://script.google.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root { --navy: #0F1A2C; --navy-2: #1A2942; --cream: #FBF7F0; --cream-dim: rgba(251,247,240,0.72); --muted: rgba(251,247,240,0.55); --gold: #D4A75A; --terra: #E08563; --line: rgba(251,247,240,0.14); }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: linear-gradient(180deg, var(--navy) 0%, var(--navy-2) 100%); min-height: 100vh; color: var(--cream); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.55; }
+  .wrap { max-width: 620px; margin: 0 auto; padding: 44px 20px 64px; }
+  .eyebrow { color: var(--gold); font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 12px; }
+  h1 { font-weight: 900; font-size: clamp(34px, 7vw, 44px); line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 10px; }
+  h1 em { font-style: italic; color: var(--gold); }
+  .sub { color: var(--cream-dim); font-size: 15px; margin-bottom: 34px; }
+  .section { margin-bottom: 38px; }
+  .section h2 { font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--terra); border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 6px; }
+  .section .meta { color: var(--muted); font-size: 12.5px; margin-bottom: 14px; }
+  .row { display: flex; align-items: center; gap: 12px; padding: 10px 0; }
+  .pos { flex: none; width: 26px; height: 26px; border-radius: 50%; background: rgba(251,247,240,0.08); border: 1px solid var(--line); color: var(--cream-dim); font-size: 12.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .row.first .pos { background: var(--gold); border-color: var(--gold); color: var(--navy); }
+  .row-body { flex: 1; min-width: 0; }
+  .row-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .row .label { font-weight: 700; font-size: 15.5px; }
+  .row.first .label { color: var(--gold); }
+  .row .count { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .bar { height: 7px; border-radius: 999px; background: rgba(251,247,240,0.08); margin-top: 7px; overflow: hidden; }
+  .bar .fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--gold), #b8854a); width: 0; transition: width .7s cubic-bezier(.16,1,.3,1); }
+  .dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 7px; border: 1px solid var(--line); vertical-align: baseline; }
+  .loading, .error { color: var(--muted); font-size: 13.5px; padding: 8px 0 14px; }
+  .foot { margin-top: 14px; text-align: center; }
+  .foot a { color: var(--cream-dim); font-size: 13.5px; text-decoration: none; border-bottom: 1px solid var(--line); padding-bottom: 2px; }
+  .foot a:hover { color: var(--gold); border-color: var(--gold); }
+  .note { text-align: center; color: var(--muted); font-size: 12px; margin-top: 28px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">LegalOwl brand vote &middot; results</div>
+  <h1>The running <em>tally.</em></h1>
+  <p class="sub">Ranked by first-place picks. Updates as votes come in &mdash; voting closes Saturday, June 6 at 8pm PT.</p>
+
+  <div class="section" id="sec-color"><h2>1 &middot; The colors</h2><div class="loading">Counting&hellip;</div></div>
+  <div class="section" id="sec-type"><h2>2 &middot; The type</h2><div class="loading">Counting&hellip;</div></div>
+  <div class="section" id="sec-owl"><h2>3 &middot; The owl</h2><div class="loading">Counting&hellip;</div></div>
+
+  <div class="foot"><a href="../">&larr; Back to the votes</a></div>
+  <p class="note">Jeremy sees the full detail and picks the winners.</p>
+</div>
+<script>
+  const SECTIONS = [
+    { el: 'sec-color',
+      url: 'https://script.google.com/macros/s/AKfycbx4GrDzQgOz0MQYtTmAG6l6tvfVglF_xcBEvLi009OI0sdcRhIuVhsV6gk65hEticru/exec',
+      labels: { 'warm-walnut': 'Warm Walnut', 'ink-amber': 'Ink & Amber', 'parchment': 'Parchment' },
+      dots: { 'warm-walnut': '#1b1510', 'ink-amber': '#0f1722', 'parchment': '#efe6d4' } },
+    { el: 'sec-type',
+      url: 'https://script.google.com/macros/s/AKfycbzPnStpEM7L1TL7wD6Xnc09g-7iG25QbXB8RpU2gCxycLS6EAKWo53n5u30LecESgAA/exec',
+      labels: { 'spectral-hanken': 'Spectral + Hanken Grotesk', 'newsreader-schibsted': 'Newsreader + Schibsted Grotesk', 'sourceserif-plex': 'Source Serif 4 + IBM Plex Sans' } },
+    { el: 'sec-owl',
+      url: 'https://script.google.com/macros/s/AKfycbyiknnInZnd4fZS8cBb4qu1-0KNE3JNJ39JuRMpCVDzRUVSJq2xyyMVJ890z5yMY5ywkQ/exec',
+      labels: { 'crest': 'Crest', 'medallion': 'Medallion', 'minim': 'Minim', 'nightglow': 'Nightglow & Ember', 'sage': 'Sage', 'scholar': 'Scholar', 'counsel': 'Counsel' } }
+  ];
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+  async function loadSection(sec) {
+    const host = document.getElementById(sec.el);
+    try {
+      const r = await fetch(sec.url);
+      const data = await r.json();
+      const total = data.total || 0;
+      const tally = data.tally || {};
+      const ids = Object.keys(sec.labels);
+      ids.sort((a, b) => (tally[b] || 0) - (tally[a] || 0));
+      const max = Math.max(1, ...ids.map(id => tally[id] || 0));
+      let html = '<div class="meta">' + total + (total === 1 ? ' vote' : ' votes') + ' so far</div>';
+      ids.forEach((id, i) => {
+        const n = tally[id] || 0;
+        const dot = sec.dots && sec.dots[id] ? '<span class="dot" style="background:' + sec.dots[id] + '"></span>' : '';
+        html += '<div class="row' + (i === 0 && n > 0 ? ' first' : '') + '">'
+          + '<span class="pos">' + (i + 1) + '</span>'
+          + '<div class="row-body"><div class="row-top"><span class="label">' + dot + esc(sec.labels[id]) + '</span>'
+          + '<span class="count">' + n + (n === 1 ? ' first-place pick' : ' first-place picks') + '</span></div>'
+          + '<div class="bar"><div class="fill" data-w="' + ((n / max) * 100) + '"></div></div></div></div>';
+      });
+      host.innerHTML = host.querySelector('h2').outerHTML + html;
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        host.querySelectorAll('.fill').forEach(f => { f.style.width = f.dataset.w + '%'; });
+      }));
+    } catch (e) {
+      host.querySelector('.loading').className = 'error';
+      host.querySelector('.error').textContent = "Couldn't load this one — try a refresh.";
+    }
+  }
+  SECTIONS.forEach(loadSection);
+</script>
+</body>
+</html>
