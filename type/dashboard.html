@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1A2942">
+<title>LegalOwl — Type — Operator view</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  button, input, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; border: 0; background: transparent; }
+
+  :root {
+    --cream: #FBF7F0;
+    --cream-2: #F2EBDD;
+    --navy: #1A2942;
+    --navy-2: #0F1A2C;
+    --ink: #2A3548;
+    --muted: #6B5D4C;
+    --gold: #D4A75A;
+    --terra: #B8533D;
+    --border: #E0D5C0;
+    --radius: 14px;
+    --shadow-sm: 0 1px 3px rgba(26, 41, 66, 0.06), 0 2px 8px rgba(26, 41, 66, 0.04);
+    --shadow-md: 0 4px 16px rgba(26, 41, 66, 0.10), 0 8px 32px rgba(26, 41, 66, 0.06);
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--cream); color: var(--ink); min-height: 100vh;
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    background-image:
+      radial-gradient(at 10% 0%, rgba(212, 167, 90, 0.08) 0%, transparent 50%),
+      radial-gradient(at 90% 100%, rgba(184, 83, 61, 0.06) 0%, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  .wrap { max-width: 960px; margin: 0 auto; padding: 28px 20px 60px; }
+
+  /* HEADER */
+  .eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--terra);
+    margin-bottom: 8px;
+  }
+  h1.title {
+    font-weight: 900; font-size: clamp(28px, 5vw, 38px);
+    line-height: 1.0; letter-spacing: -0.025em; color: var(--navy);
+    margin: 0 0 6px;
+  }
+  h1.title em { font-style: italic; font-weight: 300; color: var(--gold); }
+  .subtitle { color: var(--muted); font-size: 14px; margin: 0 0 18px; }
+
+  .toolbar {
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    margin: 4px 0 24px;
+  }
+  .toolbar button {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.05em;
+    text-transform: uppercase; padding: 8px 14px; border-radius: 16px;
+    border: 1px solid var(--border); background: white; color: var(--navy);
+    transition: all 0.15s ease;
+  }
+  .toolbar button:hover { background: var(--cream-2); border-color: var(--gold); }
+  .toolbar .status-chip {
+    font-size: 11px; color: var(--muted); padding: 6px 10px;
+    background: var(--cream-2); border-radius: 16px; letter-spacing: 0.02em;
+  }
+
+  /* PANEL — shared card shell */
+  .panel {
+    background: white; border: 1.5px solid var(--border);
+    border-radius: var(--radius); padding: 22px 24px;
+    margin: 0 0 22px; box-shadow: var(--shadow-sm);
+  }
+  .panel h2 {
+    margin: 0 0 14px; font-size: 14px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--terra);
+  }
+
+  /* FUNNEL */
+  .funnel {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+  }
+  .funnel .cell {
+    padding: 18px 16px; background: var(--cream-2); border-radius: 12px;
+    border: 1.5px solid transparent; transition: border-color 0.15s ease;
+  }
+  .funnel .cell:hover { border-color: var(--gold); }
+  .funnel .cell.sent     { background: linear-gradient(135deg, var(--cream-2), var(--cream)); }
+  .funnel .cell.opened   { background: linear-gradient(135deg, rgba(212,167,90,0.22), var(--cream-2)); }
+  .funnel .cell.voted    { background: var(--navy); color: var(--cream); }
+  .funnel .cell.voted .label,
+  .funnel .cell.voted .pct { color: rgba(251,247,240,0.85); }
+  .funnel .cell.voted .big { color: var(--gold); }
+  .funnel .label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .funnel .big {
+    font-size: 36px; font-weight: 900; color: var(--navy);
+    letter-spacing: -0.03em; line-height: 1.0; margin: 6px 0 2px;
+  }
+  .funnel .pct { font-size: 13px; color: var(--ink); }
+
+  /* TABLE */
+  table.recipients {
+    width: 100%; border-collapse: collapse; font-size: 14px;
+  }
+  table.recipients th, table.recipients td {
+    padding: 10px 8px; text-align: left; vertical-align: top;
+    border-bottom: 1px solid var(--border);
+  }
+  table.recipients th {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted);
+    border-bottom: 2px solid var(--border);
+  }
+  table.recipients tr.voted     td.col-name strong { color: var(--navy); }
+  table.recipients tr.not-voted td.col-name strong { color: var(--terra); }
+  table.recipients td.col-stamp { color: var(--muted); font-size: 12px; }
+  table.recipients td.col-stamp.set { color: var(--ink); }
+  table.recipients td.col-stamp.set::before {
+    content: "✓ "; color: var(--gold); font-weight: 900;
+  }
+  table.recipients td.col-stamp.unset::before {
+    content: "—"; color: var(--border);
+  }
+  table.recipients td.col-comment {
+    color: var(--ink); font-size: 13px; max-width: 280px;
+    overflow-wrap: anywhere;
+  }
+  table.recipients td.col-topchoice .pill {
+    display: inline-block; padding: 2px 10px; border-radius: 12px;
+    background: var(--cream-2); font-size: 12px; font-weight: 700;
+    color: var(--navy); letter-spacing: -0.01em;
+  }
+  table.recipients td.col-actions { white-space: nowrap; text-align: right; }
+  table.recipients td.col-actions button {
+    font-size: 11px; padding: 5px 10px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--cream-2); color: var(--navy);
+    letter-spacing: 0.04em; transition: all 0.15s ease;
+  }
+  table.recipients td.col-actions button:hover { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+
+  /* TALLY */
+  .tally-list { display: flex; flex-direction: column; gap: 10px; }
+  .tally-row { display: flex; align-items: center; gap: 12px; }
+  .tally-row .lbl { flex: 0 0 32%; font-weight: 700; color: var(--navy); font-size: 14px; }
+  .tally-row .bar {
+    flex: 1 1 auto; height: 14px; background: var(--cream-2);
+    border-radius: 8px; overflow: hidden; position: relative;
+  }
+  .tally-row .bar .fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: var(--gold); width: 0%;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .tally-row .count { flex: 0 0 auto; font-size: 13px; color: var(--muted); min-width: 64px; text-align: right; }
+
+  /* REMINDERS PANEL */
+  .reminders-controls {
+    display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    margin: 14px 0 0; padding-top: 14px; border-top: 1px dashed var(--border);
+  }
+  .reminders-controls button.primary {
+    background: var(--navy); color: var(--cream);
+    font-size: 13px; font-weight: 700; padding: 10px 18px;
+    border-radius: 10px; letter-spacing: -0.01em; border: 0;
+    box-shadow: var(--shadow-sm);
+  }
+  .reminders-controls button.primary:hover { background: var(--navy-2); }
+  .reminders-controls button.primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .reminders-controls .helptext {
+    font-size: 12px; color: var(--muted); flex: 1 1 auto;
+  }
+
+  .paste-block {
+    display: none; margin: 14px 0 0; padding: 14px;
+    background: var(--cream-2); border: 1.5px solid var(--gold); border-radius: 10px;
+    font-family: 'SF Mono', Menlo, monospace; font-size: 13px;
+    color: var(--navy); position: relative; line-height: 1.45;
+    white-space: pre-wrap; overflow-wrap: anywhere;
+  }
+  .paste-block.visible { display: block; }
+  .paste-block .copy-btn {
+    position: absolute; top: 10px; right: 10px;
+    font-size: 11px; padding: 4px 10px; border-radius: 8px;
+    background: white; border: 1px solid var(--border); color: var(--navy);
+    font-family: 'Inter', sans-serif; letter-spacing: 0.04em;
+  }
+  .paste-block .copy-btn:hover { background: var(--gold); }
+
+  /* KEY PROMPT (sessionStorage cache) */
+  .key-prompt {
+    display: none; position: fixed; inset: 0;
+    background: rgba(26, 41, 66, 0.55); z-index: 100;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .key-prompt.visible { display: flex; }
+  .key-prompt .modal {
+    background: white; border: 1.5px solid var(--border); border-radius: 18px;
+    padding: 28px 28px; max-width: 440px; width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  }
+  .key-prompt h3 {
+    margin: 0 0 8px; color: var(--navy); font-size: 22px; font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+  .key-prompt p { color: var(--muted); font-size: 14px; line-height: 1.45; margin: 0 0 16px; }
+  .key-prompt input[type=password] {
+    width: 100%; padding: 12px 14px; font-size: 15px;
+    border: 1.5px solid var(--border); border-radius: 10px;
+    font-family: 'SF Mono', Menlo, monospace; color: var(--ink);
+  }
+  .key-prompt input[type=password]:focus { outline: none; border-color: var(--navy); }
+  .key-prompt button {
+    margin-top: 14px; width: 100%; padding: 12px;
+    background: var(--navy); color: var(--cream); border-radius: 10px;
+    font-size: 14px; font-weight: 700; letter-spacing: -0.01em;
+  }
+  .key-prompt button:hover { background: var(--navy-2); }
+  .key-prompt .err {
+    display: none; margin-top: 10px; padding: 8px 12px;
+    background: rgba(184, 83, 61, 0.1); border: 1px solid var(--terra);
+    border-radius: 8px; color: var(--terra); font-size: 13px;
+  }
+  .key-prompt .err.visible { display: block; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+    background: var(--navy); color: var(--cream); padding: 10px 18px;
+    border-radius: 22px; font-size: 13px; font-weight: 600; letter-spacing: 0.02em;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.25); opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease; pointer-events: none;
+    z-index: 200;
+  }
+  .toast.visible { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+
+  @media (max-width: 720px) {
+    .funnel { grid-template-columns: 1fr; }
+    table.recipients th.col-comment-h, table.recipients td.col-comment { display: none; }
+    table.recipients th.col-topchoice-h, table.recipients td.col-topchoice { display: none; }
+    .panel { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="eyebrow">Operator view</div>
+  <h1 class="title">LegalOwl — Type</h1>
+  <p class="subtitle">Distribution + participation dashboard. Refreshes every 30s.</p>
+
+  <div class="toolbar">
+    <button id="refreshBtn" type="button">↻ Refresh now</button>
+    <span class="status-chip" id="statusChip">Loading&hellip;</span>
+    <a href="https://vote.legalowl.ai/type/" style="font-size:12px;color:var(--terra);letter-spacing:0.04em;text-decoration:none;">→ Public vote page</a>
+  </div>
+
+  <!-- FUNNEL -->
+  <div class="panel">
+    <h2>Participation funnel</h2>
+    <div class="funnel">
+      <div class="cell sent">
+        <div class="label">Sent</div>
+        <div class="big" id="funnelSent">—</div>
+        <div class="pct" id="funnelSentPct">&nbsp;</div>
+      </div>
+      <div class="cell opened">
+        <div class="label">Opened</div>
+        <div class="big" id="funnelOpened">—</div>
+        <div class="pct" id="funnelOpenedPct">&nbsp;</div>
+      </div>
+      <div class="cell voted">
+        <div class="label">Voted</div>
+        <div class="big" id="funnelVoted">—</div>
+        <div class="pct" id="funnelVotedPct">&nbsp;</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECIPIENTS TABLE -->
+  <div class="panel">
+    <h2>Recipients</h2>
+    <table class="recipients" id="recipientsTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Sent</th>
+          <th>Opened</th>
+          <th>Voted</th>
+          <th class="col-topchoice-h">Top choice</th>
+          <th class="col-comment-h">Comment</th>
+          <th>&nbsp;</th>
+        </tr>
+      </thead>
+      <tbody id="recipientsBody">
+        <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px;">Loading…</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TALLY -->
+  <div class="panel">
+    <h2>Tally <span id="tallyTotal" style="font-size:13px;color:var(--muted);text-transform:none;letter-spacing:0;">&nbsp;</span></h2>
+    <div class="tally-list" id="tallyList">
+      <div style="color:var(--muted);font-size:14px;">No votes yet.</div>
+    </div>
+  </div>
+
+  <!-- REMINDERS PANEL -->
+  <div class="panel">
+    <h2>Reminders</h2>
+    <p style="font-size:14px;color:var(--ink);line-height:1.5;margin:0 0 6px;">
+      Send a nudge to recipients who haven&rsquo;t voted yet. Two ways:
+    </p>
+    <ul style="font-size:13px;color:var(--muted);line-height:1.55;margin:0 0 6px;padding-left:18px;">
+      <li><strong>One-off:</strong> click <em>Copy reminder text</em> next to a row, paste into Messages manually.</li>
+      <li><strong>Batch:</strong> the button below queues all non-voters for Cowork to fire via <code>send.py</code>.</li>
+    </ul>
+    <div class="reminders-controls">
+      <button id="queueRemindersBtn" class="primary" type="button" disabled>Queue reminders for all non-voters</button>
+      <span class="helptext" id="queueHelpText">No non-voters to remind.</span>
+    </div>
+    <div class="paste-block" id="pasteBlock">
+      <button class="copy-btn" id="pasteCopyBtn" type="button">Copy</button>
+      <span id="pasteContent"></span>
+    </div>
+  </div>
+
+  <div style="text-align:center;color:var(--muted);font-size:11px;margin-top:24px;letter-spacing:0.08em;">
+    friend-vote v1.3 · operator view · auto-refresh 30s
+  </div>
+</div>
+
+<!-- KEY PROMPT (shown on first visit / when secret is missing) -->
+<div class="key-prompt" id="keyPrompt">
+  <div class="modal">
+    <h3>Operator key required</h3>
+    <p>This dashboard is gated. Paste the operator secret you set in Apps Script Project Settings → Script Properties (key <code>OPS_SECRET</code>). Cached in this browser session.</p>
+    <input type="password" id="keyInput" autocomplete="off" placeholder="paste OPS_SECRET&hellip;" />
+    <button id="keySubmit" type="button">Unlock</button>
+    <div class="err" id="keyError"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPnStpEM7L1TL7wD6Xnc09g-7iG25QbXB8RpU2gCxycLS6EAKWo53n5u30LecESgAA/exec";
+  const CAMPAIGN_SLUG = "legalowl-type-vote";
+  const LIVE_URL = "https://vote.legalowl.ai/type";
+  const SESSION_KEY = 'friend-vote:' + CAMPAIGN_SLUG + ':ops-secret';
+  const REFRESH_INTERVAL_MS = 30000;
+
+  let opsKey = '';
+  let lastData = null;
+
+  // ===================== INIT =====================
+  document.addEventListener('DOMContentLoaded', () => {
+    opsKey = sessionStorage.getItem(SESSION_KEY) || '';
+    // Allow ?key= in URL for first-time-paste convenience; cache + clean.
+    const urlKey = new URLSearchParams(window.location.search).get('key');
+    if (urlKey) {
+      opsKey = urlKey.trim();
+      sessionStorage.setItem(SESSION_KEY, opsKey);
+      // Clean key out of URL bar so it doesn't end up in history.
+      const cleanUrl = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, '', cleanUrl);
+    }
+    if (!opsKey) {
+      showKeyPrompt();
+    } else {
+      load();
+    }
+    document.getElementById('refreshBtn').addEventListener('click', load);
+    document.getElementById('keySubmit').addEventListener('click', submitKey);
+    document.getElementById('keyInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') submitKey();
+    });
+    document.getElementById('queueRemindersBtn').addEventListener('click', queueReminders);
+    document.getElementById('pasteCopyBtn').addEventListener('click', () => {
+      copyToClipboard(document.getElementById('pasteContent').textContent);
+      toast('Copied');
+    });
+    setInterval(() => { if (opsKey && !document.hidden) load(); }, REFRESH_INTERVAL_MS);
+  });
+
+  // ===================== KEY HANDLING =====================
+  function showKeyPrompt() {
+    document.getElementById('keyPrompt').classList.add('visible');
+    document.getElementById('keyError').classList.remove('visible');
+    setTimeout(() => document.getElementById('keyInput').focus(), 50);
+  }
+  function hideKeyPrompt() {
+    document.getElementById('keyPrompt').classList.remove('visible');
+  }
+  function keyError(msg) {
+    const el = document.getElementById('keyError');
+    el.textContent = msg;
+    el.classList.add('visible');
+  }
+  async function submitKey() {
+    const v = document.getElementById('keyInput').value.trim();
+    if (!v) { keyError('Paste the secret to unlock.'); return; }
+    opsKey = v;
+    sessionStorage.setItem(SESSION_KEY, opsKey);
+    const ok = await load(true);
+    if (ok) {
+      hideKeyPrompt();
+    } else {
+      sessionStorage.removeItem(SESSION_KEY);
+      opsKey = '';
+      keyError('That key didn\'t work. Check the value in Script Properties.');
+    }
+  }
+
+  // ===================== LOAD =====================
+  async function load(silent) {
+    if (!APPS_SCRIPT_URL) {
+      setStatus('Preview mode — no Apps Script URL.');
+      return false;
+    }
+    if (!opsKey) { showKeyPrompt(); return false; }
+    setStatus('Loading…');
+    try {
+      const url = APPS_SCRIPT_URL + '?action=dashboard&key=' + encodeURIComponent(opsKey);
+      const r = await fetch(url, { method: 'GET' });
+      const data = await r.json();
+      if (data.status !== 'ok') {
+        setStatus(data.message || 'Failed.');
+        return false;
+      }
+      lastData = data;
+      render(data);
+      setStatus('Updated ' + relTime(new Date(data.generated_at)));
+      return true;
+    } catch (e) {
+      setStatus('Network error.');
+      return false;
+    }
+  }
+
+  // ===================== RENDER =====================
+  function render(d) {
+    const recipients = d.recipients || [];
+    const sent = recipients.filter(r => r.sent_at).length;
+    const opened = recipients.filter(r => r.opened_at).length;
+    const voted = recipients.filter(r => r.voted_at).length;
+    const total = recipients.length;
+
+    document.getElementById('funnelSent').textContent = sent + ' / ' + total;
+    document.getElementById('funnelSentPct').textContent = total ? pct(sent, total) : '';
+    document.getElementById('funnelOpened').textContent = opened + ' / ' + total;
+    document.getElementById('funnelOpenedPct').textContent = total ? pct(opened, total) : '';
+    document.getElementById('funnelVoted').textContent = voted + ' / ' + total;
+    document.getElementById('funnelVotedPct').textContent = total ? pct(voted, total) : '';
+
+    renderRecipients(recipients);
+    renderTally(d);
+    renderReminders(recipients);
+  }
+
+  function renderRecipients(recipients) {
+    const body = document.getElementById('recipientsBody');
+    if (!recipients.length) {
+      body.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px;">No recipients configured.</td></tr>';
+      return;
+    }
+    // Sort: voted first (most recent), then opened, then sent, then everyone else.
+    const sorted = recipients.slice().sort((a, b) => {
+      if (a.voted_at && !b.voted_at) return -1;
+      if (b.voted_at && !a.voted_at) return 1;
+      if (a.opened_at && !b.opened_at) return -1;
+      if (b.opened_at && !a.opened_at) return 1;
+      return (a.name || '').localeCompare(b.name || '');
+    });
+    body.innerHTML = sorted.map(r => {
+      const rowClass = r.voted_at ? 'voted' : 'not-voted';
+      const topPill = r.top_choice
+        ? '<span class="pill">' + escapeHtml(r.top_choice) + '</span>'
+        : '';
+      const actions = r.voted_at
+        ? '<span style="color:var(--muted);font-size:11px;letter-spacing:0.04em;">DONE</span>'
+        : '<button type="button" onclick="copyReminder(\'' + r.token + '\', \'' + escapeAttr(r.name) + '\')">📋 Copy reminder</button>';
+      return (
+        '<tr class="' + rowClass + '">' +
+        '<td class="col-name"><strong>' + escapeHtml(r.name) + '</strong></td>' +
+        stampCell(r.sent_at) +
+        stampCell(r.opened_at) +
+        stampCell(r.voted_at) +
+        '<td class="col-topchoice">' + topPill + '</td>' +
+        '<td class="col-comment">' + (r.comment ? escapeHtml(r.comment) : '<span style="color:var(--border);">—</span>') + '</td>' +
+        '<td class="col-actions">' + actions + '</td>' +
+        '</tr>'
+      );
+    }).join('');
+  }
+
+  function stampCell(iso) {
+    if (!iso) return '<td class="col-stamp unset">&nbsp;</td>';
+    return '<td class="col-stamp set" title="' + iso + '">' + relTime(new Date(iso)) + '</td>';
+  }
+
+  function renderTally(d) {
+    const total = d.total_votes || 0;
+    const tally = d.tally || {};
+    document.getElementById('tallyTotal').textContent = total
+      ? '· ' + total + ' vote' + (total === 1 ? '' : 's')
+      : '';
+    const list = document.getElementById('tallyList');
+    if (!total) {
+      list.innerHTML = '<div style="color:var(--muted);font-size:14px;">No votes yet.</div>';
+      return;
+    }
+    const entries = Object.entries(tally).sort((a, b) => b[1] - a[1]);
+    list.innerHTML = entries.map(([id, count]) => {
+      const pctVal = total ? (count / total) * 100 : 0;
+      return (
+        '<div class="tally-row">' +
+        '<div class="lbl">' + escapeHtml(id) + '</div>' +
+        '<div class="bar"><div class="fill" style="width:' + pctVal.toFixed(0) + '%;"></div></div>' +
+        '<div class="count">' + count + ' · ' + pctVal.toFixed(0) + '%</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  function renderReminders(recipients) {
+    const nonVoters = recipients.filter(r => !r.voted_at);
+    const btn = document.getElementById('queueRemindersBtn');
+    const help = document.getElementById('queueHelpText');
+    if (!nonVoters.length) {
+      btn.disabled = true;
+      btn.textContent = 'All recipients have voted ✓';
+      help.textContent = 'No reminders needed.';
+    } else {
+      btn.disabled = false;
+      btn.textContent = 'Queue reminders for ' + nonVoters.length + ' non-voter' + (nonVoters.length === 1 ? '' : 's');
+      help.textContent = 'Queues tokens; run send.py in Cowork to actually fire iMessages.';
+    }
+  }
+
+  // ===================== ACTIONS =====================
+  window.copyReminder = function(token, name) {
+    if (!LIVE_URL) {
+      toast('LIVE_URL not set — re-generate after deploy.');
+      return;
+    }
+    const link = LIVE_URL + '/?v=' + token;
+    const text = 'Quick reminder — let me know what you think: ' + link;
+    copyToClipboard(text);
+    toast('Reminder text for ' + (name || 'recipient') + ' copied');
+  };
+
+  async function queueReminders() {
+    if (!lastData) return;
+    const nonVoters = (lastData.recipients || []).filter(r => !r.voted_at);
+    if (!nonVoters.length) return;
+    if (!confirm('Queue reminders for ' + nonVoters.length + ' non-voter' + (nonVoters.length === 1 ? '' : 's') + '?\\n\\nThis does NOT send iMessages directly. You\'ll run send.py in Cowork to fire them.')) return;
+
+    const payload = {
+      _admin: 'queue_reminders',
+      tokens: nonVoters.map(r => r.token),
+      args: { tokens: nonVoters.map(r => r.token), key: opsKey }
+    };
+    // Apps Script reads {_admin, args} for admin routing; we send both shapes
+    // so this is forward-compat with any args-shape refactor.
+    payload.args = { tokens: nonVoters.map(r => r.token), key: opsKey };
+
+    try {
+      const r = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      // Apps Script POST quirk: may return HTML. Treat 2xx as success.
+      if (!r.ok && r.status !== 0) {
+        toast('Queue failed (HTTP ' + r.status + ')');
+        return;
+      }
+      showPasteBlock(nonVoters);
+      toast(nonVoters.length + ' reminder' + (nonVoters.length === 1 ? '' : 's') + ' queued');
+      // Re-fetch dashboard JSON so the reminders panel updates.
+      setTimeout(load, 800);
+    } catch (e) {
+      toast('Queue failed.');
+    }
+  }
+
+  function showPasteBlock(nonVoters) {
+    const block = document.getElementById('pasteBlock');
+    const content = document.getElementById('pasteContent');
+    const names = nonVoters.map(r => '  - ' + r.name).join('\\n');
+    const lines = [
+      'Reminders queued in Google Sheets PendingReminders.',
+      '',
+      'In Cowork, ask me:',
+      '',
+      '  Drain friend-vote reminders for campaign ' + CAMPAIGN_SLUG + '.',
+      '',
+      'Recipients:',
+      names
+    ];
+    content.textContent = lines.join('\n');
+    block.classList.add('visible');
+  }
+
+  // ===================== UTILS =====================
+  function setStatus(s) { document.getElementById('statusChip').textContent = s; }
+  function pct(a, b) { return Math.round((a / b) * 100) + '%'; }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+  function escapeAttr(s) {
+    return String(s).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  }
+  function relTime(date) {
+    if (!(date instanceof Date) || isNaN(date)) return '—';
+    const delta = Math.max(0, (Date.now() - date.getTime()) / 1000);
+    if (delta < 45) return 'just now';
+    if (delta < 90) return '1m ago';
+    if (delta < 3600) return Math.floor(delta / 60) + 'm ago';
+    if (delta < 86400) return Math.floor(delta / 3600) + 'h ago';
+    return Math.floor(delta / 86400) + 'd ago';
+  }
+  function copyToClipboard(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).catch(()=>fallbackCopy(text));
+    } else {
+      fallbackCopy(text);
+    }
+  }
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (_) {}
+    document.body.removeChild(ta);
+  }
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('visible');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => t.classList.remove('visible'), 1800);
+  }
+</script>
+
+</body>
+</html>
