@@ -350,6 +350,14 @@
   .opt-visual .chip .cap { font-size: 9.5px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; margin-top: 7px; }
   .opt-visual svg, .opt-visual img { display: block; }
 .live-badge{display:none !important}
+  /* Neutral top-choice chrome — the navy fill misread as a palette frame. */
+  .rank-item.top-choice { background: #fff !important; border-color: var(--gold) !important; box-shadow: 0 0 0 2px rgba(212,167,90,0.35), var(--shadow-sm) !important; }
+  .rank-item.top-choice .name { color: var(--navy) !important; }
+  .rank-item.top-choice .name .accent { color: var(--gold) !important; }
+  .rank-item.top-choice .tag { color: var(--muted) !important; }
+  .rank-item.top-choice .drag-handle { color: var(--muted) !important; }
+  .rank-item.top-choice .move-btn { background: var(--cream-2) !important; border-color: var(--border) !important; color: var(--navy) !important; }
+
   .shuffle-btn{display:none !important}
   *{-webkit-tap-highlight-color:transparent}
 </style>
@@ -714,6 +722,12 @@
       return;
     }
     document.body.classList.add('thanks-mode');
+    // Refresh tally in the background so the results view includes this vote.
+    try {
+      const r2 = await fetch(APPS_SCRIPT_URL);
+      const data = await r2.json();
+      renderTally(data);
+    } catch (e) {}
   }
 
   function revealResults() {
