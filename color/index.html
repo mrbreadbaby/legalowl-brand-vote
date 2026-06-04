@@ -6,6 +6,8 @@
 <meta name="theme-color" content="#1A2942">
 <title>LegalOwl — Color</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://script.google.com">
+
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -373,7 +375,7 @@
     </div>
     <p class="lede">Use the &#9650;&#9660; buttons — favorite on top.</p>
     
-    <div class="context-blurb">I'm building LegalOwl — AI software for criminal-defense law firms. It handles the busywork of a case (intake, discovery, deadlines, drafting) so the lawyers can lawyer. First up: which colors do you like best? Put your favorite on top.</div>
+    <div class="context-blurb">LegalOwl is localized-file AI for California criminal defense — leverage for the attorneys and the whole office behind them, attorney-in-the-loop, Cal-Bar aligned by design. First call: which colors do you like best? Put your favorite on top.</div>
     
     
     <div class="deadline-pill">Voting closes Saturday, June 6 at 8:00 PM</div>
@@ -673,25 +675,15 @@
     // v1.3 — include token if present (binds vote to recipient row server-side).
     if (VOTE_TOKEN) payload.token = VOTE_TOKEN;
 
-    let postOk = false;
+    // Optimistic submit — fire the write with keepalive and move on immediately.
     try {
-      const r = await fetch(APPS_SCRIPT_URL, {
+      fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        keepalive: true
       });
-      postOk = r.ok || r.status === 0;
-    } catch (e) {
-      submitBtn.classList.remove('loading');
-      alert("Hmm, that didn't submit. Try again in a moment.");
-      return;
-    }
-    if (!postOk) {
-      submitBtn.classList.remove('loading');
-      alert("Hmm, that didn't submit. Try again in a moment.");
-      return;
-    }
-    // Fast-path: head straight to the next vote. Token rides along.
+    } catch (e) {}
     window.location.href = '../type/' + (VOTE_TOKEN ? '?v=' + VOTE_TOKEN : '');
   }
 
