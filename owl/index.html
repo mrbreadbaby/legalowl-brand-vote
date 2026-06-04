@@ -360,6 +360,26 @@
 
   .shuffle-btn{display:none !important}
   *{-webkit-tap-highlight-color:transparent}
+
+  /* Results view — strip vote controls so the tally reads as results, not a re-vote. */
+  body.results-mode .move-btns, body.results-mode .drag-handle, body.results-mode .how-to,
+  body.results-mode .lede, body.results-mode .context-blurb, body.results-mode .ranking-status,
+  body.results-mode .extras, body.results-mode .submit { display: none !important; }
+  body.results-mode .rank-item { cursor: default; }
+  #resultsHead { display: none; }
+  body.results-mode #resultsHead { display: block; background: var(--cream-2); border-left: 3px solid var(--gold); border-radius: 8px; padding: 13px 16px; margin: 0 0 18px; }
+  #resultsHead h2 { color: var(--navy); font-size: 20px; margin: 0 0 4px; }
+  #resultsHead p { color: var(--muted); font-size: 13.5px; margin: 0; }
+  .whoshoo { background: var(--cream-2); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin: 0 auto 24px; max-width: 430px; text-align: left; }
+  .whoshoo-check { display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; color: var(--ink); cursor: pointer; }
+  .whoshoo-check input { margin-top: 3px; accent-color: var(--navy); width: 16px; height: 16px; }
+  .whoshoo-check em { color: var(--terra); font-style: italic; font-weight: 600; }
+  .whoshoo-form { display: none; margin-top: 12px; gap: 8px; }
+  .whoshoo-form.open { display: flex; }
+  .whoshoo-form input { flex: 1; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; font-family: inherit; background: #fff; color: var(--ink); }
+  .whoshoo-form button { padding: 9px 16px; border: none; border-radius: 8px; background: var(--navy); color: var(--cream); font-weight: 700; font-size: 13.5px; cursor: pointer; }
+  .whoshoo-msg { display: none; margin-top: 10px; font-size: 13.5px; font-weight: 600; color: #4c7a44; }
+  .whoshoo-msg.show { display: block; }
 </style>
 </head>
 <body>
@@ -372,6 +392,10 @@
       
     </div>
     <p class="lede">Use the &#9650;&#9660; buttons — favorite on top.</p>
+    <div id="resultsHead">
+      <h2>The running tally</h2>
+      <p id="resultsGreet">Here&rsquo;s where things stand &mdash; the bars under each owl show where voters are ranking it (far left = ranked #1).</p>
+    </div>
     
     <div class="context-blurb">Last one — the owl itself. Seven designs made the shortlist, each shown two ways. Put your favorite on top.</div>
     
@@ -421,7 +445,15 @@
   <div class="thanks" id="thanks">
     <div class="check">&check;</div>
     <h2>Vote logged.</h2>
-    <p>That's all three — thank you. Jeremy sees the full tally and picks the winners.</p>
+    <p id="thanksBody">That's all three — thank you. Jeremy sees the full tally and picks the winners.</p>
+    <div class="whoshoo">
+      <label class="whoshoo-check"><input type="checkbox" id="whoshooChk"><span>Want to know the <em>who&rsquo;s hoo</em> as LegalOwl develops? Drop your email and stay in the loop.</span></label>
+      <div class="whoshoo-form" id="whoshooForm">
+        <input id="whoshooEmail" type="email" placeholder="you@email.com" autocomplete="email">
+        <button type="button" id="whoshooBtn">Add me</button>
+      </div>
+      <div class="whoshoo-msg" id="whoshooMsg">You&rsquo;re on the list.</div>
+    </div>
     <a class="live-results-link" id="seeResults">See the running tally &rarr;</a>
   </div>
 </div>
@@ -721,6 +753,12 @@
       alert("Hmm, that didn't submit. Try again in a moment.");
       return;
     }
+    const typedName = nameEl.value.trim();
+    if (typedName) {
+      window.__voterName = typedName;
+      document.getElementById('thanksBody').textContent =
+        "That's all three — thank you, " + typedName + ". Jeremy sees the full tally and picks the winners.";
+    }
     document.body.classList.add('thanks-mode');
     // Refresh tally in the background so the results view includes this vote.
     try {
@@ -733,6 +771,10 @@
   function revealResults() {
     document.body.classList.remove('thanks-mode');
     document.body.classList.add('results-mode');
+    const g = document.getElementById('resultsGreet');
+    if (g && window.__voterName) {
+      g.textContent = 'Thanks, ' + window.__voterName + ' — your votes are in. The bars under each owl show where voters are ranking it (far left = ranked #1).';
+    }
     document.getElementById('submitBtn').style.display = 'none';
     document.querySelectorAll('.rank-item').forEach(c => c.style.pointerEvents = 'none');
     document.querySelector('.extras').style.display = 'none';
@@ -754,6 +796,32 @@
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
     }[c]));
   }
+
+  // Who's-hoo email opt-in (thank-you page).
+  (function () {
+    const chk = document.getElementById('whoshooChk');
+    const form = document.getElementById('whoshooForm');
+    const btn = document.getElementById('whoshooBtn');
+    const emailEl = document.getElementById('whoshooEmail');
+    const msg = document.getElementById('whoshooMsg');
+    if (!chk) return;
+    chk.addEventListener('change', () => { form.classList.toggle('open', chk.checked); if (chk.checked) emailEl.focus(); });
+    btn.addEventListener('click', async () => {
+      const email = emailEl.value.trim();
+      if (!email || email.indexOf('@') < 1 || email.indexOf('.') < 0) { emailEl.style.borderColor = 'var(--terra)'; return; }
+      btn.disabled = true; btn.textContent = 'Adding\u2026';
+      try {
+        const r = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ whoshoo: { email: email, name: window.__voterName || '', token: VOTE_TOKEN || '' } })
+        });
+        if (r.ok || r.status === 0) {
+          form.classList.remove('open'); chk.disabled = true; msg.classList.add('show');
+        } else { btn.disabled = false; btn.textContent = 'Add me'; }
+      } catch (e) { btn.disabled = false; btn.textContent = 'Add me'; }
+    });
+  })();
 </script>
 
 </body>
