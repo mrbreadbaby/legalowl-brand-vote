@@ -349,6 +349,9 @@
   .opt-visual .chip { flex: 1; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 14px 6px 9px; border: 1px solid rgba(0,0,0,.18); }
   .opt-visual .chip .cap { font-size: 9.5px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; margin-top: 7px; }
   .opt-visual svg { display: block; }
+.live-badge{display:none !important}
+  .shuffle-btn{display:none !important}
+  *{-webkit-tap-highlight-color:transparent}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,600;1,600&family=Hanken+Grotesk:wght@400;600&family=Newsreader:ital,opsz,wght@0,6..72,600;1,6..72,600&family=Schibsted+Grotesk:wght@400;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,600;1,8..60,600&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
 </head>
@@ -361,16 +364,14 @@
       <h1 class="title">Order the <em>typefaces.</em></h1>
       
     </div>
-    <p class="lede">Drag into your order — favorite on top.</p>
+    <p class="lede">Use the &#9650;&#9660; buttons — favorite on top.</p>
     
-    <div class="context-blurb">Same product, second call: the fonts. Each card below is a live specimen — headline, body, and the docket-style numbers. Rank by which feels most like a serious-but-warm tool. Vote 2 of 3.</div>
+    <div class="context-blurb">Second: the lettering. Same words in three different typefaces — which one feels right to you? Favorite on top.</div>
     
     
     <div class="deadline-pill">Voting closes Saturday, June 6 at 8:00 PM</div>
     
-    <div class="how-to">
-      <strong>How to rank:</strong> drag the rows to put them in order (or use the up/down arrows on mobile). <strong>#1 = your top priority.</strong> Initial order is randomized so the first card doesn&rsquo;t bias your pick.
-    </div>
+    <div class="how-to"><strong>How it works:</strong> tap the &#9650; &#9660; buttons to move each option up or down. <strong>#1 = your favorite.</strong></div>
     <div class="live-badge" id="liveBadge">
       <span class="dot"></span>
       <span id="liveBadgeText">Loading vote count&hellip;</span>
@@ -382,8 +383,8 @@
     </div>
 
     <div class="ranking-status">
-      <div class="count"><strong>3</strong> options &middot; drag to reorder</div>
-      <button class="shuffle-btn" id="shuffleBtn" type="button">Shuffle order</button>
+      <div class="count"><strong>3</strong> options</div>
+      
     </div>
 
     <div class="rank-list-wrap">
@@ -479,10 +480,7 @@
   document.addEventListener('DOMContentLoaded', () => {
     checkDeadline();
     renderList();
-    document.getElementById('shuffleBtn').addEventListener('click', () => {
-      order = shuffle(order);
-      renderList();
-    });
+    
     document.getElementById('submitBtn').addEventListener('click', submit);
     document.getElementById('seeResults').addEventListener('click', revealResults);
     loadTally();
@@ -689,16 +687,8 @@
       alert("Hmm, that didn't submit. Try again in a moment.");
       return;
     }
-    // Re-fetch tally via GET to confirm and render — Apps Script POST returns HTML, not JSON.
-    try {
-      const r2 = await fetch(APPS_SCRIPT_URL);
-      const data = await r2.json();
-      document.body.classList.add('thanks-mode');
-      document.body.classList.add('results-mode');
-      renderTally(data);
-    } catch (e) {
-      document.body.classList.add('thanks-mode');
-    }
+    // Fast-path: head straight to the next vote. Token rides along.
+    window.location.href = '../owl/' + (VOTE_TOKEN ? '?v=' + VOTE_TOKEN : '');
   }
 
   function revealResults() {
