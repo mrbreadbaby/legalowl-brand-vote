@@ -371,15 +371,15 @@
   <div class="vote-ui">
     <div class="eyebrow">LegalOwl brand vote · takes 30 seconds</div>
     <div class="title-row">
-      <h1 class="title">Order the <em>typefaces.</em></h1>
+      <h1 class="title">Rank the <em>typefaces.</em></h1>
       
     </div>
     <p class="lede">Use the &#9650;&#9660; buttons — favorite on top.</p>
     
-    <div class="context-blurb">Second: the lettering. Same words in three different typefaces — which one feels right to you? Favorite on top.</div>
+    <div class="context-blurb">Second: the typography — and the second hero. <strong>Discovery Hero</strong> auto-starts the moment a case is signed: it sends the requests and tracks every item the DA produces against what the code requires, flags what's missing, and keeps the follow-ups drafted — with the attorney approving every move. The same words below, set three ways: which reads clearest? Favorite on top.</div>
     
     
-    <div class="deadline-pill">Voting closes Saturday, June 6 at 8:00 PM</div>
+    <div class="deadline-pill">Voting closes Saturday, June 6 &middot; 8pm PT</div>
     
     <div class="how-to"><strong>How it works:</strong> tap the &#9650; &#9660; buttons to move each option up or down. <strong>#1 = your favorite.</strong></div>
     <div class="live-badge" id="liveBadge">
@@ -415,13 +415,13 @@
 
     <button class="submit" id="submitBtn">Cast vote</button>
 
-    <div class="footer">Votes write to <strong>Jeremy's tally sheet</strong>. No accounts, no tracking, no spam.</div>
+    <div class="footer">Votes go to <strong>Jeremy's private tally</strong>. No accounts, no spam &mdash; everything stays private.</div>
   </div>
 
   <div class="thanks" id="thanks">
     <div class="check">&check;</div>
     <h2>Vote logged.</h2>
-    <p>Thanks for weighing in. One more: pick the owl. Jeremy sees the full tally.</p>
+    <p>One more: the owl.</p>
     <a class="live-results-link" id="seeResults">See the running tally &rarr;</a>
     <br><a class="live-results-link" id="nextVoteLink" style="margin-top:14px;display:inline-block" href="../owl/">Last one: pick the owl &rarr;</a>
   </div>
@@ -452,7 +452,7 @@
   }
 
   // Option metadata, server-rendered so JS can rebuild rank-items after shuffle/reorder.
-  const VISUALS = {"spectral-hanken": "<div style=\"background:#fff;border:1px solid rgba(0,0,0,.10);border-radius:10px;padding:14px 16px 13px\"><div style=\"font-family:'Spectral',Georgia,serif;font-weight:600;font-size:21px;line-height:1.15;color:#1a2238\">Discovery, handled. <em>Approval, yours.</em></div><div style=\"font-family:'Hanken Grotesk',sans-serif;font-size:12.5px;line-height:1.5;color:#444c5e;margin-top:7px\">12 of 14 items received. 2 outstanding &mdash; drafted follow-ups await your approval.</div><div style=\"font-family:'Hanken Grotesk',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8a8f9c;margin-top:8px\">Spectral + Hanken Grotesk</div></div>", "newsreader-schibsted": "<div style=\"background:#fff;border:1px solid rgba(0,0,0,.10);border-radius:10px;padding:14px 16px 13px\"><div style=\"font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:21px;line-height:1.15;color:#1a2238\">Discovery, handled. <em>Approval, yours.</em></div><div style=\"font-family:'Schibsted Grotesk',sans-serif;font-size:12.5px;line-height:1.5;color:#444c5e;margin-top:7px\">12 of 14 items received. 2 outstanding &mdash; drafted follow-ups await your approval.</div><div style=\"font-family:'Schibsted Grotesk',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8a8f9c;margin-top:8px\">Newsreader + Schibsted Grotesk</div></div>", "sourceserif-plex": "<div style=\"background:#fff;border:1px solid rgba(0,0,0,.10);border-radius:10px;padding:14px 16px 13px\"><div style=\"font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:21px;line-height:1.15;color:#1a2238\">Discovery, handled. <em>Approval, yours.</em></div><div style=\"font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;line-height:1.5;color:#444c5e;margin-top:7px\">12 of 14 items received. 2 outstanding &mdash; drafted follow-ups await your approval.</div><div style=\"font-family:'IBM Plex Sans',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8a8f9c;margin-top:8px\">Source Serif 4 + IBM Plex Sans</div></div>"};
+  const VISUALS = {"spectral-hanken": "<div style=\"background:#fff;border:1px solid rgba(0,0,0,.10);border-radius:10px;padding:14px 16px 13px\"><div style=\"font-family:'Spectral',Georgia,serif;font-weight:600;font-size:21px;line-height:1.15;color:#1a2238\">Discovery, managed. <em>Approval, yours.</em></div><div style=\"font-family:'Hanken Grotesk',sans-serif;font-size:12.5px;line-height:1.5;color:#444c5e;margin-top:7px\">12 of 14 items received. 2 outstanding &mdash; drafted follow-ups await your approval.</div><div style=\"font-family:'Hanken Grotesk',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8a8f9c;margin-top:8px\">Spectral + Hanken Grotesk</div></div>", "newsreader-schibsted": "<div style=\"background:#fff;border:1px solid rgba(0,0,0,.10);border-radius:10px;padding:14px 16px 13px\"><div style=\"font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:21px;line-height:1.15;color:#1a2238\">Discovery, managed. <em>Approval, yours.</em></div><div style=\"font-family:'Schibsted Grotesk',sans-serif;font-size:12.5px;line-height:1.5;color:#444c5e;margin-top:7px\">12 of 14 items received. 2 outstanding &mdash; drafted follow-ups await your approval.</div><div style=\"font-family:'Schibsted Grotesk',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8a8f9c;margin-top:8px\">Newsreader + Schibsted Grotesk</div></div>", "sourceserif-plex": "<div style=\"background:#fff;border:1px solid rgba(0,0,0,.10);border-radius:10px;padding:14px 16px 13px\"><div style=\"font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:21px;line-height:1.15;color:#1a2238\">Discovery, managed. <em>Approval, yours.</em></div><div style=\"font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;line-height:1.5;color:#444c5e;margin-top:7px\">12 of 14 items received. 2 outstanding &mdash; drafted follow-ups await your approval.</div><div style=\"font-family:'IBM Plex Sans',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8a8f9c;margin-top:8px\">Source Serif 4 + IBM Plex Sans</div></div>"};
   const OPTIONS = [
     
     {
