@@ -390,7 +390,7 @@
   <div class="vote-ui">
     <div class="eyebrow">LegalOwl brand vote · takes 30 seconds</div>
     <div class="title-row">
-      <h1 class="title">Pick the <em>owl.</em></h1>
+      <h1 class="title">Rank the <em>owls.</em></h1>
       
     </div>
     <p class="lede">Use the &#9650;&#9660; buttons — favorite on top.</p>
@@ -399,10 +399,10 @@
       <p id="resultsGreet">Here&rsquo;s where things stand &mdash; the bars under each owl show where voters are ranking it (far left = ranked #1).</p>
     </div>
     
-    <div class="context-blurb">Last one — the owl itself. Seven designs made the shortlist, each shown two ways. Put your favorite on top.</div>
+    <div class="context-blurb">Last one — the owl itself. Around the heroes sits the firm's command center: live dashboards, a daily brief, the calendar, and an admin page that keeps the whole office in sync — designed with API calls into the leading legal SaaS services. Seven designs made the shortlist, each shown two ways. Put your favorite on top.</div>
     
     
-    <div class="deadline-pill">Voting closes Saturday, June 6 at 8:00 PM</div>
+    <div class="deadline-pill">Voting closes Sunday, June 7 &middot; 12pm PT</div>
     
     <div class="how-to"><strong>How it works:</strong> tap the &#9650; &#9660; buttons to move each option up or down. <strong>#1 = your favorite.</strong></div>
     <div class="live-badge" id="liveBadge">
@@ -435,19 +435,19 @@
       </div>
       <div class="field">
         <label class="field-label" for="name">Your name (optional)</label>
-        <input id="name" type="text" placeholder="So Jeremy knows it's you" autocomplete="name">
+        <input id="name" type="text" placeholder="so I know whose vote it is" autocomplete="name">
       </div>
     </div>
 
     <button class="submit" id="submitBtn">Cast vote</button>
 
-    <div class="footer">Votes write to <strong>Jeremy's tally sheet</strong>. No accounts, no tracking, no spam.</div>
+    <div class="footer">Votes go to <strong>Jeremy's private tally</strong>. No accounts, no spam &mdash; everything stays private.</div>
   </div>
 
   <div class="thanks" id="thanks">
     <div class="check">&check;</div>
     <h2>Vote logged.</h2>
-    <p id="thanksBody">That's all three — thank you. Jeremy sees the full tally and picks the winners.</p>
+    <p id="thanksBody">That's all three — thank you. Jeremy reviews the full tally and makes the final call — and I'll send the winning brand to everyone who voted.</p>
     <div class="whoshoo">
       <label class="whoshoo-check"><input type="checkbox" id="whoshooChk"><span>Want to know the <em>who&rsquo;s hoo</em> as LegalOwl develops? Drop your email and stay in the loop.</span></label>
       <div class="whoshoo-form" id="whoshooForm">
@@ -463,7 +463,7 @@
 <script>
   const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyiknnInZnd4fZS8cBb4qu1-0KNE3JNJ39JuRMpCVDzRUVSJq2xyyMVJ890z5yMY5ywkQ/exec";
   const VALID_OPTION_IDS = ["crest", "medallion", "minim", "nightglow", "sage", "scholar", "counsel"];
-  const DEADLINE_ISO = "2026-06-06T20:00:00-07:00";
+  const DEADLINE_ISO = "2026-06-07T12:00:00-07:00";
   const MAX_POSITION = 7;
 
   // v1.3 — recipient token, read from `?v=<token>` in the URL when present.
@@ -499,7 +499,7 @@
       id: "medallion",
       label: "Medallion",
       accent: "",
-      tag: "Hero seal \u2014 notched ears, glowing amber eyes, etched disc."
+      tag: "A seal \u2014 notched ears, amber eyes, etched disc."
     },
     
     {
@@ -534,7 +534,7 @@
       id: "counsel",
       label: "Counsel",
       accent: "",
-      tag: "The senior-counsel character \u2014 engraved portrait, spectacles, a tie. Shown on walnut and ink."
+      tag: "The senior counsel \u2014 engraved portrait, spectacles, a tie. Shown on walnut and ink."
     }
     
   ];
@@ -749,7 +749,7 @@
     if (typedName) {
       window.__voterName = typedName;
       document.getElementById('thanksBody').textContent =
-        "That's all three — thank you, " + typedName + ". Jeremy sees the full tally and picks the winners.";
+        "That's all three — thank you, " + typedName + ". Jeremy reviews the full tally and makes the final call — and I'll send the winning brand to everyone who voted.";
     }
     document.body.classList.add('thanks-mode');
   }
